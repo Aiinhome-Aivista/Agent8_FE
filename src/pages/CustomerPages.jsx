@@ -223,23 +223,35 @@ export function ChatPage() {
   const intentColor = { renewal: "blue", policy_inquiry: "purple", complaint: "red", coverage_question: "teal", address_update: "amber", faq: "slate" };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] bg-white rounded-xl border border-gray-200 overflow-hidden">
-      {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-100 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">AI</div>
-          <div>
-            <div className="font-semibold text-gray-800">InsureAI Assistant</div>
-            <div className="flex items-center gap-1.5 text-xs text-teal-600">
-              <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse" />
-              Online · AI-powered
+    <div className="flex h-[calc(100vh-8rem)] gap-4">
+      {/* Main Chat Panel */}
+      <div className="flex flex-col flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {/* Header */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-100 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">AI</div>
+            <div>
+              <div className="font-semibold text-gray-800">InsureAI Assistant</div>
+              <div className="flex items-center gap-1.5 text-xs text-teal-600">
+                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse" />
+                Online · AI-powered
+              </div>
             </div>
           </div>
+          
+          <div className="flex items-center gap-4">
+            {/* INJECTED: Agent Status Widget */}
+            {messages.length > 0 && messages[messages.length - 1].role === "ai" && messages[messages.length - 1].worker_used && (
+              <div className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 font-mono font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+                {messages[messages.length - 1].worker_used || "Intent Agent"}
+              </div>
+            )}
+            <button onClick={startNewChat} className="text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium transition-colors">
+              + New Chat
+            </button>
+          </div>
         </div>
-        <button onClick={startNewChat} className="text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium transition-colors">
-          + New Chat
-        </button>
-      </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -290,6 +302,41 @@ export function ChatPage() {
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="rotate-90"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
         </button>
       </div>
+    </div>
+      
+    {/* INJECTED: AI Summary Panel */}
+      {messages.length > 0 && (
+        <div className="w-64 bg-white rounded-xl border border-gray-200 p-4 hidden lg:block overflow-y-auto">
+          <div className="font-semibold text-gray-800 mb-4 text-sm flex items-center gap-2">
+            <span className="text-blue-600">🧠</span> AI Insight
+          </div>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+              <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Detected Intent</div>
+              <div className="text-sm font-bold text-gray-800 capitalize">
+                {(messages[messages.length - 1].intent || "Pending").replace(/_/g, " ")}
+              </div>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+              <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Confidence Score</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+                  <div className="bg-green-500 h-full" style={{ width: `${(messages[messages.length - 1].confidence || 0) * 100}%` }} />
+                </div>
+                <div className="text-sm font-bold text-gray-800">
+                  {messages[messages.length - 1].confidence ? `${Math.round(messages[messages.length - 1].confidence * 100)}%` : "--"}
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+              <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Active Workflow</div>
+              <div className="text-sm font-bold text-indigo-600">
+                {messages[messages.length - 1].worker_used || "Router"}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -804,6 +851,29 @@ export function EscalationPage() {
                 <div className="text-sm font-medium text-gray-800 mb-1">{t.issue}</div>
                 <div className="text-xs text-gray-400">{t.category} · Created {fmtDate(t.created_at)}</div>
                 {t.assigned_csr_name && <div className="text-xs text-blue-600 mt-1">Assigned to: {t.assigned_csr_name}</div>}
+                
+                {/* INJECTED: Escalation Timeline */}
+                <div className="mt-4 pl-3 border-l-2 border-indigo-100 space-y-3">
+                  <div className="relative text-xs">
+                    <div className="absolute -left-[17px] top-1 w-2.5 h-2.5 bg-indigo-500 rounded-full ring-2 ring-white"></div>
+                    <span className="font-semibold text-gray-700">Ticket Created</span>
+                    <div className="text-gray-400 mt-0.5">{fmtDate(t.created_at)}</div>
+                  </div>
+                  {t.assigned_csr_name && (
+                    <div className="relative text-xs">
+                      <div className="absolute -left-[17px] top-1 w-2.5 h-2.5 bg-blue-500 rounded-full ring-2 ring-white"></div>
+                      <span className="font-semibold text-gray-700">Assigned to CSR</span>
+                      <div className="text-gray-400 mt-0.5">{t.assigned_csr_name}</div>
+                    </div>
+                  )}
+                  {t.status === 'resolved' && (
+                    <div className="relative text-xs">
+                      <div className="absolute -left-[17px] top-1 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-white"></div>
+                      <span className="font-semibold text-gray-700">Ticket Resolved</span>
+                      <div className="text-gray-400 mt-0.5">{t.updated_at ? fmtDate(t.updated_at) : 'Done'}</div>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

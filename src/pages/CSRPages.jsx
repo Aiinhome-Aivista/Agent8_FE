@@ -32,7 +32,13 @@ export function CSRDashboard({ setPage }) {
                 <Badge color={t.priority === "high" || t.priority === "critical" ? "red" : "amber"}>{t.priority}</Badge>
               </div>
               <div className="text-sm text-gray-700 truncate">{t.issue}</div>
-              <div className="text-xs text-gray-400">{t.customer_name} · {fmtDate(t.created_at)}</div>
+              <div className="text-xs text-gray-400 mb-1">{t.customer_name} · {fmtDate(t.created_at)}</div>
+              
+              {/* INJECTED: SLA Counter */}
+              <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold border ${t.sla_status === 'breached' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
+                <span className={t.sla_status === 'breached' ? 'animate-pulse' : ''}>⏳</span>
+                SLA: {t.sla_status === 'breached' ? 'BREACHED' : 'Active'}
+              </div>
             </div>
             <Badge color={t.status === "open" ? "red" : "amber"}>{t.status}</Badge>
           </div>
