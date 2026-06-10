@@ -3,13 +3,13 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo } from "../components/SharedContext";
-import { Badge, KpiCard, Spinner, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
+import { Badge, KpiCard, Spinner, PageLoader, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
 
 // ─── CSR: DASHBOARD ───────────────────────────────────────────────────────────
 export function CSRDashboard({ setPage }) {
   const [data, setData] = useState(null);
   useEffect(() => { api.get("/dashboard/csr").then(r => setData(r.data)); }, []);
-  if (!data) return <div className="flex items-center justify-center h-[60vh]"><Spinner size="lg" /></div>;
+  if (!data) return <PageLoader />;
 
   return (
     <div className="space-y-5">

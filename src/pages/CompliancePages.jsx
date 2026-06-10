@@ -3,13 +3,13 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo } from "../components/SharedContext";
-import { Badge, KpiCard, Spinner, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
+import { Badge, KpiCard, Spinner, PageLoader, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
 
 // ─── COMPLIANCE: DASHBOARD ────────────────────────────────────────────────────
 export function ComplianceDashboard() {
   const [data, setData] = useState(null);
   useEffect(() => { api.get("/compliance/summary").then(r => setData(r.data)); }, []);
-  if (!data) return <div className="flex items-center justify-center h-[60vh]"><Spinner size="lg" /></div>;
+  if (!data) return <PageLoader />;
 
   return (
     <div className="space-y-5">
@@ -223,7 +223,7 @@ export function CSRKnowledgeBase() {
   const submitUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) return toast("Please select at least one file.", "error");
 
-    const allowed = [".pdf", ".jpg", ".jpeg", ".png"];
+    const allowed = [".pdf", ".jpg", ".jpeg", ".png", ".txt"];
     const MAX = 5 * 1024 * 1024; // 5 MB
 
     // Basic client-side validation
@@ -342,7 +342,7 @@ export function CSRKnowledgeBase() {
           <h2 className="text-lg font-bold text-gray-800">Knowledge Base Management</h2>
           <p className="text-sm text-gray-500">Manage internal documents and resources for CSR.</p>
         </div>
-        <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+        <input type="file" accept=".pdf,.jpg,.jpeg,.png,.txt" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
         <button onClick={() => setShowModal(true)} disabled={uploading} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-all cursor-pointer disabled:bg-gray-400">
           {uploading ? <Spinner size="sm" /> : <span>📤</span>}
           {uploading ? "Processing..." : "Upload Document"}
@@ -378,9 +378,9 @@ export function CSRKnowledgeBase() {
                   <div className="text-sm text-gray-600 mb-2">Drag & drop files here</div>
                   <div className="text-xs text-gray-500 mb-3">or</div>
                   <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-2 bg-white border rounded text-sm">Select files</button>
-                  <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple className="hidden" ref={fileInputRef} onChange={(e) => { handleFileChange(e); if (e.target.files?.[0]) fileInputRef.current.value = ""; }} />
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,.txt" multiple className="hidden" ref={fileInputRef} onChange={(e) => { handleFileChange(e); if (e.target.files?.[0]) fileInputRef.current.value = ""; }} />
                 </div>
-                <div className="text-sm text-gray-500">Allowed formats: PDF, JPG, JPEG, PNG. Max size: 5 MB.</div>
+                <div className="text-sm text-gray-500">Allowed formats: PDF, JPG, JPEG, PNG, TXT. Max size: 5 MB.</div>
                 {selectedFiles.length > 0 && (
                   <div className="p-3 border rounded-md max-h-40 overflow-y-auto">
                     {selectedFiles.map((sf, idx) => (

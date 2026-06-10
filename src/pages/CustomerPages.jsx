@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo } from "../components/SharedContext";
-import { Badge, KpiCard, Spinner, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
+import { Badge, KpiCard, Spinner, PageLoader, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
 
 // ─── SHARED HELPER: strip JSON wrappers from LLM responses ───────────────────
 function cleanAiResponse(text) {
@@ -62,7 +62,7 @@ function renderMarkdown(text) {
 export function CustomerDashboard({ setPage }) {
   const [data, setData] = useState(null);
   useEffect(() => { api.get("/dashboard/customer").then(r => setData(r.data)).catch(() => { }); }, []);
-  if (!data) return <div className="flex items-center justify-center h-[60vh]"><Spinner size="lg" /></div>;
+  if (!data) return <PageLoader />;
 
   const kbInsights = data.kb_insights || []; // kept for backend compat, not displayed
 
@@ -360,7 +360,7 @@ export function PoliciesPage({ setPage }) {
   const statusColor = { active: "green", expired: "red", pending: "amber", cancelled: "red" };
   const typeIcon = { "Motor Insurance": "🚗", "Health Insurance": "❤️", "Term Life": "🛡️", "Home Insurance": "🏠", "Travel Insurance": "✈️", "Business Insurance": "🏢" };
 
-  if (loading) return <div className="flex items-center justify-center h-[60vh]"><Spinner size="lg" /></div>;
+  if (loading) return <PageLoader text="Loading Assistant..." />;
 
   return (
     <div>

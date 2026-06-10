@@ -26,6 +26,15 @@ export function Spinner({ size = "md" }) {
   return <div className={`${s} border-2 border-blue-600 border-t-transparent rounded-full animate-spin`} />;
 }
 
+export function PageLoader({ text = "Loading..." }) {
+  return (
+    <div className="flex flex-col items-center justify-center w-full h-[60vh] gap-3 text-gray-500">
+      <Spinner size="lg" />
+      <div className="text-sm font-medium animate-pulse">{text}</div>
+    </div>
+  );
+}
+
 export function EmptyState({ icon = "📭", title, desc }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center text-gray-400">
@@ -82,40 +91,44 @@ export const NAV = {
 };
 
 export function Sidebar({ page, setPage, user, onLogout }) {
+  const [collapsed, setCollapsed] = useState(false);
   const nav = NAV[user?.role] || [];
   const initials = user?.name?.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "U";
   return (
-    <aside className="w-56 bg-slate-900 flex flex-col flex-shrink-0 h-full">
-      <div className="p-4 border-b border-slate-700/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">I</div>
-          <div>
-            <div className="text-sm font-bold text-slate-100">InsureAI Pro</div>
-            <div className="text-xs text-slate-500">Enterprise</div>
+    <aside className={`${collapsed ? "w-[72px]" : "w-56"} bg-slate-900 flex flex-col flex-shrink-0 h-full transition-all duration-300`}>
+      <div className={`p-4 border-b border-slate-700/60 flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+        {!collapsed && (
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">I</div>
+            <div className="font-bold text-slate-100 whitespace-nowrap">InsureAI</div>
           </div>
-        </div>
+        )}
+        <button onClick={() => setCollapsed(!collapsed)} className="text-slate-400 hover:text-white text-xl leading-none flex-shrink-0" title="Toggle Sidebar">
+          ☰
+        </button>
       </div>
-      <div className="p-3 border-b border-slate-700/60">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{initials}</div>
+      <div className={`p-3 border-b border-slate-700/60 flex items-center ${collapsed ? "justify-center" : "gap-2.5"}`}>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0" title={collapsed ? user?.name : ""}>{initials}</div>
+        {!collapsed && (
           <div className="overflow-hidden">
             <div className="text-xs font-semibold text-slate-200 truncate">{user?.name}</div>
             <div className="text-xs text-slate-500 capitalize">{user?.role}</div>
           </div>
-        </div>
+        )}
       </div>
-      <nav className="flex-1 overflow-y-auto p-2">
+      <nav className="flex-1 overflow-y-auto p-2 space-y-1">
         {nav.map(item => (
-          <button key={item.id} onClick={() => setPage(item.id)}
-            className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium mb-0.5 transition-all ${page === item.id ? "bg-blue-600/25 text-blue-300" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"}`}>
-            <span className="text-base">{item.icon}</span>
-            <span>{item.label}</span>
+          <button key={item.id} onClick={() => setPage(item.id)} title={collapsed ? item.label : ""}
+            className={`w-full text-left flex items-center ${collapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2"} rounded-lg text-sm font-medium transition-colors ${page === item.id ? "bg-blue-600/25 text-blue-300" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"}`}>
+            <span className="text-lg flex-shrink-0">{item.icon}</span>
+            {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
           </button>
         ))}
       </nav>
       <div className="p-3 border-t border-slate-700/60">
-        <button onClick={onLogout} className="w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg hover:bg-slate-800 transition-all">
-          <span>🚪</span><span>Sign Out</span>
+        <button onClick={onLogout} title={collapsed ? "Sign Out" : ""} className={`w-full flex items-center ${collapsed ? "justify-center px-0 py-2" : "gap-3 px-3 py-2"} text-slate-400 hover:text-red-400 text-sm rounded-lg hover:bg-slate-800 transition-colors`}>
+          <span className="text-lg flex-shrink-0">🚪</span>
+          {!collapsed && <span className="whitespace-nowrap">Sign Out</span>}
         </button>
       </div>
     </aside>
