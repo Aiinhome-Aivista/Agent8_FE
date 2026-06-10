@@ -17,7 +17,7 @@ const PAGE_TITLES = {
   "csr-dashboard": "CSR Dashboard", "csr-all-tickets": "Manage Tickets", "csr-conversation-view": "Conversation Viewer", "csr-knowledge-base": "Knowledge Base",
   "supervisor-dashboard": "Operations Dashboard", "supervisor-ai-performance": "AI Performance", "supervisor-escalation-monitor": "Escalation Monitor",
   "compliance-hub": "Compliance Hub", "compliance-audit-logs": "Audit Logs", "compliance-guardrail-alerts": "Guardrail Violations",
-  "compliance-sensitive-actions": "Sensitive Actions", "compliance-export-reports": "Export Reports",
+  "compliance-sensitive-actions": "Sensitive Actions", "compliance-export-reports": "Export Reports", "compliance-escalation-monitor": "Escalation Monitor",
 };
 
 const DEFAULT_PAGE = { customer: "customer-dashboard", csr: "csr-dashboard", supervisor: "supervisor-dashboard", compliance: "compliance-hub" };
@@ -56,6 +56,7 @@ function MainLayout({ user, onLogout }) {
       case "supervisor-dashboard": return <SupervisorDashboard />;
       case "supervisor-ai-performance": return <AIPerformancePage />;
       case "supervisor-escalation-monitor": return <EscalationMonitor />;
+      case "compliance-escalation-monitor": return <EscalationMonitor />;
       case "compliance-hub": return <ComplianceDashboard />;
       case "compliance-audit-logs": return <AuditLogsPage />;
       case "compliance-guardrail-alerts": return <GuardrailViolations />;

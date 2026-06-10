@@ -122,38 +122,144 @@ export function AIPerformancePage() {
 // ─── SUPERVISOR: ESCALATION MONITOR ──────────────────────────────────────────
 export function EscalationMonitor() {
   const [tickets, setTickets] = useState([]);
-  useEffect(() => { api.get("/escalations").then(r => setTickets(r.data.escalations || [])); }, []);
+  const [filter, setFilter] = useState("all");
+  const [selected, setSelected] = useState(null);
+  const [form, setForm] = useState({ status: "", note: "", resolution_notes: "" });
+  const [updating, setUpdating] = useState(false);
+  const toast = useToast();
 
-  const open = tickets.filter(t => t.status === "open");
-  const high = tickets.filter(t => (t.priority === "high" || t.priority === "critical") && t.status !== "resolved");
+  const reload = () => { api.get("/escalations").then(r => setTickets(r.data.escalations || [])); };
+  useEffect(reload, []);
+
+  const selectTicket = async (t) => {
+    setSelected(t);
+    setForm({ status: t.status, note: "", resolution_notes: t.resolution_notes || "" });
+    try {
+      const res = await api.get(`/escalations/${t.id}`);
+      setSelected(res.data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const filtered = filter === "all" ? tickets : tickets.filter(t => t.status === filter);
+
+  const update = async () => {
+    setUpdating(true);
+    try {
+      await api.patch(`/escalations/${selected.id}`, { status: form.status || selected.status, note: form.note, resolution_notes: form.resolution_notes });
+      toast("Ticket updated!", "success");
+      setForm({ status: "", note: "", resolution_notes: "" });
+      reload();
+      const res = await api.get(`/escalations/${selected.id}`);
+      setSelected(res.data);
+    } catch { toast("Update failed", "error"); }
+    finally { setUpdating(false); }
+  };
+
   const statusColor = { open: "red", "in-progress": "amber", resolved: "green", closed: "slate" };
+
+  const openCount = tickets.filter(t => t.status === "open").length;
+  const highCount = tickets.filter(t => (t.priority === "high" || t.priority === "critical") && t.status !== "resolved").length;
 
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-4 gap-3">
         <KpiCard label="Total Tickets" value={tickets.length} />
-        <KpiCard label="Open" value={open.length} color="text-red-600" />
-        <KpiCard label="High Priority" value={high.length} color="text-red-600" />
+        <KpiCard label="Open" value={openCount} color="text-red-600" />
+        <KpiCard label="High Priority" value={highCount} color="text-red-600" />
         <KpiCard label="Resolved" value={tickets.filter(t => t.status === "resolved").length} color="text-green-600" />
       </div>
-      {open.length > 0 && <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-700">⚠️ {open.length} open ticket{open.length > 1 ? "s" : ""} require{open.length === 1 ? "s" : ""} immediate attention.</div>}
-      <div className="bg-white rounded-xl border border-gray-200">
-        <div className="p-4 border-b border-gray-100 font-semibold text-gray-700">All Escalations</div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50"><tr>{["Ticket ID", "Customer", "Issue", "Priority", "Status", "Assigned To", "Created"].map(h => <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500">{h}</th>)}</tr></thead>
-            <tbody>{tickets.map(t => (
-              <tr key={t.id} className="border-t border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-3 font-mono text-xs">{t.ticket_id}</td>
-                <td className="px-4 py-3">{t.customer_name}</td>
-                <td className="px-4 py-3 max-w-[180px]"><div className="truncate">{t.issue}</div></td>
-                <td className="px-4 py-3"><Badge color={t.priority === "high" || t.priority === "critical" ? "red" : "amber"}>{t.priority}</Badge></td>
-                <td className="px-4 py-3"><Badge color={statusColor[t.status] || "slate"}>{t.status}</Badge></td>
-                <td className="px-4 py-3">{t.assigned_csr_name || <span className="text-gray-400">Unassigned</span>}</td>
-                <td className="px-4 py-3 text-gray-400 whitespace-nowrap">{fmtDate(t.created_at)}</td>
-              </tr>
-            ))}</tbody>
-          </table>
+      {openCount > 0 && <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-700">⚠️ {openCount} open ticket{openCount > 1 ? "s" : ""} require immediate attention.</div>}
+      
+      <div className="flex gap-4 h-[600px]">
+        <div className="w-80 flex flex-col">
+          <div className="flex gap-1 mb-3 flex-wrap">
+            {["all", "open", "in-progress", "resolved"].map(s => (
+              <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1 rounded-lg text-xs font-medium ${filter === s ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}>{s}</button>
+            ))}
+          </div>
+          <div className="flex-1 overflow-y-auto space-y-2">
+            {filtered.map(t => (
+              <div key={t.id} onClick={() => selectTicket(t)}
+                className={`border-2 rounded-xl p-3 cursor-pointer transition-all ${selected?.id === t.id ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-300 bg-white"}`}>
+                <div className="flex justify-between items-start mb-1">
+                  <span className="font-mono text-xs text-gray-400">{t.ticket_id}</span>
+                  <Badge color={statusColor[t.status] || "slate"}>{t.status}</Badge>
+                </div>
+                <div className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">{t.issue}</div>
+                <div className="text-xs text-gray-400">{t.customer_name} · <Badge color={t.priority === "high" || t.priority === "critical" ? "red" : "amber"}>{t.priority}</Badge></div>
+              </div>
+            ))}
+            {filtered.length === 0 && <EmptyState icon="📭" title="No tickets found" />}
+          </div>
+        </div>
+
+        <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-y-auto">
+          {!selected ? (
+            <EmptyState icon="👈" title="Select a ticket to manage" desc="Click any ticket on the left to view and update" />
+          ) : (
+            <div className="p-5">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <div className="font-mono text-sm text-gray-500">{selected.ticket_id}</div>
+                  <div className="text-lg font-bold text-gray-800 mt-1">{selected.issue}</div>
+                </div>
+                <div className="flex gap-2">
+                  <Badge color={statusColor[selected.status] || "slate"}>{selected.status}</Badge>
+                  <Badge color={selected.priority === "high" || selected.priority === "critical" ? "red" : "amber"}>{selected.priority}</Badge>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 bg-gray-50 rounded-xl p-3 text-sm mb-4">
+                {[["Customer", selected.customer_name], ["Email", selected.customer_email], ["Phone", selected.customer_phone || "—"], ["Policy", selected.policy_number || "—"], ["Category", selected.category || "—"], ["Created", fmtDate(selected.created_at)], ["Assigned CSR", selected.assigned_csr_name || "Unassigned"]].map(([l, v]) => (
+                  <div key={l}><div className="text-xs text-gray-400 font-semibold">{l}</div><div className="text-gray-800">{v}</div></div>
+                ))}
+              </div>
+
+              {selected.notes?.length > 0 && (
+                <div className="mb-4">
+                  <div className="text-sm font-semibold text-gray-600 mb-2">CSR & Supervisor Notes</div>
+                  {selected.notes.map((n, i) => (
+                    <div key={i} className="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5 mb-1.5 text-sm">
+                      <div className="text-gray-700">{n.note}</div>
+                      <div className="text-xs text-gray-400 mt-1">{n.csr_name} · {timeAgo(n.created_at)}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Update Status</label>
+                  <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" value={form.status || selected.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
+                    {["open", "in-progress", "resolved", "closed"].map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                
+                {selected.attachment_path && (
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Attached Proof Document</label>
+                    <a href={`http://localhost:8001/api/${selected.attachment_path.replace(/\\/g, "/")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors">
+                      📄 View Uploaded Document
+                    </a>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Add Supervisor Note (Internal)</label>
+                  <textarea rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-blue-400" placeholder="Internal note..." value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Resolution Notes</label>
+                  <textarea rows={2} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-blue-400" placeholder="How was this resolved?" value={form.resolution_notes} onChange={e => setForm(f => ({ ...f, resolution_notes: e.target.value }))} />
+                </div>
+                <button onClick={update} disabled={updating} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors">
+                  {updating ? <Spinner size="sm" /> : null} Update Ticket
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

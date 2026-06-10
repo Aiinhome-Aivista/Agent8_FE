@@ -7,7 +7,7 @@ import { Badge, KpiCard, Spinner, EmptyState, Toast, Sidebar, Topbar, NotifPanel
 
 // ─── LOGIN PAGE ───────────────────────────────────────────────────────────────
 export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
-  const [email, setEmail] = useState(initialEmail || "soniakhatun9786@gmail.com");
+  const [email, setEmail] = useState(initialEmail || "sumankhamrai.98@gmail.com");
   const [pass, setPass] = useState("123456");
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,9 +21,9 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
   }, [initialEmail]);
 
   const roles = [
-    { label: "Customer", email: "soniakhatun9786@gmail.com", icon: "👤" },
+    { label: "Customer", email: "sumankhamrai.98@gmail.com", icon: "👤" },
     { label: "CSR Agent", email: "sonia19khatun98@gmail.com", icon: "🎧" },
-    { label: "Supervisor", email: "supervisor@test.com", icon: "📊" },
+    { label: "Supervisor", email: "soniaagent234@gmail.com", icon: "📊" },
     { label: "Compliance", email: "compliance@test.com", icon: "🔒" },
   ];
 

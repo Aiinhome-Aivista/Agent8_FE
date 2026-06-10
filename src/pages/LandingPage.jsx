@@ -8,9 +8,9 @@ import { Badge, KpiCard, Spinner, EmptyState, Toast, Sidebar, Topbar, NotifPanel
 // ─── LANDING PAGE ──────────────────────────────────────────────────────────────
 export function LandingPage({ onNavigateToLogin }) {
   const roles = [
-    { label: "Customer Portal", email: "soniakhatun9786@gmail.com", icon: "👤", desc: "Access AI chat assistant, policy renewals, smart document upload, and raise tickets.", color: "from-blue-600/20 to-cyan-600/20 hover:border-blue-500/50" },
+    { label: "Customer Portal", email: "sumankhamrai.98@gmail.com", icon: "👤", desc: "Access AI chat assistant, policy renewals, smart document upload, and raise tickets.", color: "from-blue-600/20 to-cyan-600/20 hover:border-blue-500/50" },
     { label: "CSR Agent Workspace", email: "sonia19khatun98@gmail.com", icon: "🎧", desc: "Manage tickets, live chat with customers, and review RAG-suggested solutions.", color: "from-purple-600/20 to-pink-600/20 hover:border-purple-500/50" },
-    { label: "Supervisor Hub", email: "supervisor@test.com", icon: "📊", desc: "Monitor team metrics, track escalations, audit AI performance, and set rules.", color: "from-amber-600/20 to-orange-600/20 hover:border-amber-500/50" },
+    { label: "Supervisor Hub", email: "soniaagent234@gmail.com", icon: "📊", desc: "Monitor team metrics, track escalations, audit AI performance, and set rules.", color: "from-amber-600/20 to-orange-600/20 hover:border-amber-500/50" },
     { label: "Compliance & Safety", email: "compliance@test.com", icon: "🔒", desc: "Inspect detailed audit logs, track LLM guardrail violations, and export reports.", color: "from-emerald-600/20 to-teal-600/20 hover:border-emerald-500/50" }
   ];
 

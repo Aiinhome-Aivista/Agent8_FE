@@ -74,6 +74,7 @@ export const NAV = {
   ],
   compliance: [
     { id: "compliance-hub", label: "Compliance Hub", icon: "🏠" },
+    { id: "compliance-escalation-monitor", label: "Escalation Monitor", icon: "⚠️" },
     { id: "compliance-audit-logs", label: "Audit Logs", icon: "📋" },
     { id: "compliance-guardrail-alerts", label: "Guardrail Alerts", icon: "🚨" },
     { id: "compliance-sensitive-actions", label: "Sensitive Actions", icon: "👁️" },
