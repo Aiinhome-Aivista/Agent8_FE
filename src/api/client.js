@@ -45,7 +45,7 @@ export const authAPI = {
 };
 
 export const chatAPI = {
-  send: (data) => api.post('/chat', data),
+  send: (data) => api.post('/chat', data, { timeout: 120000 }),
   history: (params) => api.get('/chat/history', { params }),
   sessions: () => api.get('/chat/sessions'),
   clear: () => api.delete('/chat/history'),

@@ -208,7 +208,7 @@ export function ChatPage() {
     setMessages(m => [...m, { role: "user", content: msg, time: new Date() }]);
     setLoading(true);
     try {
-      const res = await api.post("/chat", { message: msg, session_id: sessionId });
+      const res = await api.post("/chat", { message: msg, session_id: sessionId }, { timeout: 120000 });
       const d = res.data;
       setMessages(m => [...m, { role: "ai", content: d.response, intent: d.intent, confidence: d.confidence, guardrail: d.guardrail_violated, time: new Date() }]);
     } catch (e) {
