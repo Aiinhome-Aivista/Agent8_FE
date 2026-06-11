@@ -11,7 +11,7 @@ import { ComplianceDashboard, AuditLogsPage, GuardrailViolations, SensitiveActio
 
 // ─── PAGE TITLES ──────────────────────────────────────────────────────────────
 const PAGE_TITLES = {
-  "customer-dashboard": "Dashboard", "customer-ai-assistant": "AI Insurance Assistant", "customer-policies": "My Policies",
+  "customer-dashboard": "Dashboard", "customer-ai-assistant": "AI Insurance Assistant", "customer-policies": "My Policies", "customer-documents": "My Documents",
   "customer-policy-renewal": "Policy Renewal",
   "customer-raise-ticket": "Raise Support Ticket", "customer-notifications": "Notifications", "customer-chat-history": "Chat History",
   "csr-dashboard": "CSR Dashboard", "csr-all-tickets": "Manage Tickets", "csr-conversation-view": "Conversation Viewer", "csr-knowledge-base": "Knowledge Base",
@@ -45,6 +45,7 @@ function MainLayout({ user, onLogout }) {
       case "customer-dashboard": return <CustomerDashboard setPage={setPage} />;
       case "customer-ai-assistant": return <ChatPage />;
       case "customer-policies": return <PoliciesPage setPage={setPage} />;
+      case "customer-documents": return <UploadPage />;
       case "customer-policy-renewal": return <RenewalPage />;
       case "customer-raise-ticket": return <EscalationPage />;
       case "customer-notifications": return <NotificationsPage />;

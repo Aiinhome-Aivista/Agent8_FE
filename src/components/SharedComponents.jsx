@@ -65,6 +65,7 @@ export const NAV = {
     { id: "customer-dashboard", label: "Dashboard", icon: "🏠" },
     { id: "customer-ai-assistant", label: "AI Assistant", icon: "🤖" },
     { id: "customer-policies", label: "My Policies", icon: "🛡️" },
+    { id: "customer-documents", label: "My Documents", icon: "📤" },
     { id: "customer-policy-renewal", label: "Policy Renewal", icon: "🔄" },
     { id: "customer-raise-ticket", label: "Raise Ticket", icon: "🎫" },
     { id: "customer-notifications", label: "Notifications", icon: "🔔" },

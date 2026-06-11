@@ -87,7 +87,7 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
               </div>
             </div>
             {error && <div className="text-red-600 text-xs mb-3 bg-red-50 p-2 rounded-lg">{error}</div>}
-            <div className="text-xs text-gray-400 mb-3 bg-gray-50 rounded-lg p-2">All test accounts use password: <strong>123456</strong></div>
+            {/* <div className="text-xs text-gray-400 mb-3 bg-gray-50 rounded-lg p-2">All test accounts use password: <strong>123456</strong></div> */}
             <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all">
               {loading ? <Spinner size="sm" /> : "Sign In"}
             </button>

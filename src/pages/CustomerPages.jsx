@@ -83,7 +83,7 @@ export function CustomerDashboard({ setPage }) {
       </div>
 
       {/* ── Source badge when using document-extracted stats ── */}
-      {useDoc && (
+      {/* useDoc && (
         <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5">
           <span className="text-base">{docPol.source === "kb_documents" ? "🏢" : "📄"}</span>
           <div className="flex-1">
@@ -104,7 +104,7 @@ export function CustomerDashboard({ setPage }) {
           </div>
           <span className="text-xs text-gray-400 bg-white border border-blue-100 rounded-full px-2 py-0.5">AI Extracted</span>
         </div>
-      )}
+      ) */}
 
       {/* ── Expiring Soon ── */}
       {data.expiring_soon?.length > 0 && (
@@ -123,7 +123,7 @@ export function CustomerDashboard({ setPage }) {
       )}
 
       {/* ── Recent Activity ── */}
-      {data.recent_activity?.length > 0 && (
+      {/* data.recent_activity?.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200">
           <div className="p-4 border-b border-gray-100 font-semibold text-gray-700">Recent Activity</div>
           {data.recent_activity.map((a, i) => (
@@ -136,7 +136,7 @@ export function CustomerDashboard({ setPage }) {
             </div>
           ))}
         </div>
-      )}
+      ) */}
     </div>
   );
 }

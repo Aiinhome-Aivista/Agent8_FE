@@ -406,16 +406,16 @@ export function CSRKnowledgeBase() {
         <div className="p-2 border-b border-gray-100 font-semibold text-gray-700">All Documents</div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50"><tr>{["File Name", "Category", "Uploaded At", "Size (KB)", "Relevance"].map(h => <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500">{h}</th>)}</tr></thead>
+            <thead className="bg-gray-50"><tr>{["File Name", "Category", "Uploaded At", /* "Size (KB)", */ "Relevance"].map(h => <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500">{h}</th>)}</tr></thead>
             <tbody>
               {docs.length === 0 ? (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">No documents found. Upload to see them here.</td></tr>
+                <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-400">No documents found. Upload to see them here.</td></tr>
               ) : docs.map((d, i) => (
                 <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
                   <td className="px-4 py-3">{d.name}</td>
                   <td className="px-4 py-3">{d.category}</td>
                   <td className="px-4 py-3">{d.uploaded_at ? new Date(d.uploaded_at).toLocaleString() : "-"}</td>
-                  <td className="px-4 py-3">{d.size ? Math.round(d.size/1024) : "-"}</td>
+                  {/* <td className="px-4 py-3">{d.size ? Math.round(d.size/1024) : "-"}</td> */}
                   <td className="px-4 py-3">{d.relevance ?? "-"}</td>
                   
                 </tr>
