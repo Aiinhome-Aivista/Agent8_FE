@@ -238,7 +238,7 @@ export function ChatPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {/* INJECTED: Agent Status Widget */}
             {messages.length > 0 && messages[messages.length - 1].role === "ai" && messages[messages.length - 1].worker_used && (
@@ -253,58 +253,58 @@ export function ChatPage() {
           </div>
         </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((m, i) => (
-          <div key={i} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-            <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white ${m.role === "ai" ? "bg-gradient-to-br from-blue-600 to-teal-500" : "bg-gradient-to-br from-violet-500 to-pink-500"}`}>
-              {m.role === "ai" ? "AI" : (user?.name?.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "U")}
-            </div>
-            <div className={`max-w-[75%] ${m.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
-              {/* Intent badge removed as requested */}
-              <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${m.role === "ai" ? "bg-gray-100 text-gray-800 rounded-tl-sm" : "bg-blue-600 text-white rounded-tr-sm"}`}>
-                {m.role === "ai" ? renderMarkdown(m.content) : m.content}
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
+              <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white ${m.role === "ai" ? "bg-gradient-to-br from-blue-600 to-teal-500" : "bg-gradient-to-br from-violet-500 to-pink-500"}`}>
+                {m.role === "ai" ? "AI" : (user?.name?.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "U")}
               </div>
-              <div className="text-xs text-gray-400 mt-1">{m.time ? new Date(m.time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}</div>
+              <div className={`max-w-[75%] ${m.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
+                {/* Intent badge removed as requested */}
+                <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${m.role === "ai" ? "bg-gray-100 text-gray-800 rounded-tl-sm" : "bg-blue-600 text-white rounded-tr-sm"}`}>
+                  {m.role === "ai" ? renderMarkdown(m.content) : m.content}
+                </div>
+                <div className="text-xs text-gray-400 mt-1">{m.time ? new Date(m.time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}</div>
+              </div>
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">AI</div>
-            <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1.5 items-center">
-              {[0, 150, 300].map(d => <span key={d} className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+          ))}
+          {loading && (
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">AI</div>
+              <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1.5 items-center">
+                {[0, 150, 300].map(d => <span key={d} className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+              </div>
             </div>
+          )}
+          <div ref={messagesEnd} />
+        </div>
+
+        {/* Quick replies */}
+        {messages.length <= 1 && (
+          <div className="flex flex-wrap gap-2 px-4 pb-3">
+            {QUICK.map(q => (
+              <button key={q} onClick={() => send(q)} className="px-3 py-1.5 text-xs border border-blue-200 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all bg-white">
+                {q}
+              </button>
+            ))}
           </div>
         )}
-        <div ref={messagesEnd} />
-      </div>
 
-      {/* Quick replies */}
-      {messages.length <= 1 && (
-        <div className="flex flex-wrap gap-2 px-4 pb-3">
-          {QUICK.map(q => (
-            <button key={q} onClick={() => send(q)} className="px-3 py-1.5 text-xs border border-blue-200 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all bg-white">
-              {q}
-            </button>
-          ))}
+        {/* Input */}
+        <div className="p-4 border-t border-gray-100 flex gap-3">
+          <textarea ref={inputRef} rows={1} value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+            placeholder="Ask me anything about your insurance…"
+            className="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all" />
+          <button onClick={() => send()} disabled={!input.trim() || loading}
+            className="w-10 h-10 bg-blue-600 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all flex-shrink-0">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="rotate-90"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+          </button>
         </div>
-      )}
-
-      {/* Input */}
-      <div className="p-4 border-t border-gray-100 flex gap-3">
-        <textarea ref={inputRef} rows={1} value={input} onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-          placeholder="Ask me anything about your insurance…"
-          className="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all" />
-        <button onClick={() => send()} disabled={!input.trim() || loading}
-          className="w-10 h-10 bg-blue-600 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all flex-shrink-0">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="rotate-90"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-        </button>
       </div>
-    </div>
-      
-    {/* INJECTED: AI Summary Panel */}
+
+      {/* INJECTED: AI Summary Panel */}
       {messages.length > 0 && (
         <div className="w-64 bg-white rounded-xl border border-gray-200 p-4 hidden lg:block overflow-y-auto">
           <div className="font-semibold text-gray-800 mb-4 text-sm flex items-center gap-2">
@@ -770,7 +770,7 @@ export function EscalationPage() {
     setLoading(true);
     try {
       const finalIssue = form.category === "Contact/Address Update" ? `[Reason: ${form.reason}] ${form.issue}` : form.issue;
-      
+
       const formData = new FormData();
       formData.append("issue", finalIssue);
       formData.append("category", form.category);
@@ -781,7 +781,7 @@ export function EscalationPage() {
       const r = await api.post("/escalations", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      
+
       toast(`Ticket ${r.data.ticket_id} created! CSR will respond within 2 hours.`, "success");
       setForm(f => ({ ...f, issue: "", category: "Claim Rejection", priority: "medium", reason: "", file: null }));
       reload();
@@ -851,7 +851,7 @@ export function EscalationPage() {
                 <div className="text-sm font-medium text-gray-800 mb-1">{t.issue}</div>
                 <div className="text-xs text-gray-400">{t.category} · Created {fmtDate(t.created_at)}</div>
                 {t.assigned_csr_name && <div className="text-xs text-blue-600 mt-1">Assigned to: {t.assigned_csr_name}</div>}
-                
+
                 {/* INJECTED: Escalation Timeline */}
                 <div className="mt-4 pl-3 border-l-2 border-indigo-100 space-y-3">
                   <div className="relative text-xs">
