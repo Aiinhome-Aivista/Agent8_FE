@@ -374,9 +374,15 @@ export function PoliciesPage({ setPage }) {
               </div>
               <button onClick={() => { setSelected(null); setCoverage(null); }} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
             </div>
-            <div className="bg-blue-50 rounded-xl p-4 mb-4 text-center">
-              <div className="text-xs text-blue-600 font-semibold mb-1">Sum Insured</div>
-              <div className="text-2xl font-bold text-blue-700">₹{fmt(coverage.sum_insured)}</div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-blue-50 rounded-xl p-4 text-center">
+                <div className="text-xs text-blue-600 font-semibold mb-1">Sum Insured</div>
+                <div className="text-xl md:text-2xl font-bold text-blue-700">₹{fmt(coverage.sum_insured)}</div>
+              </div>
+              <div className="bg-green-50 rounded-xl p-4 text-center">
+                <div className="text-xs text-green-600 font-semibold mb-1">Premium</div>
+                <div className="text-xl md:text-2xl font-bold text-green-700">₹{fmt(coverage.premium || 0)}</div>
+              </div>
             </div>
             <div className="space-y-2">
               {Object.entries(coverage.coverage_details || {}).map(([k, v]) => (
@@ -415,7 +421,7 @@ export function PoliciesPage({ setPage }) {
                 <div><span className="text-gray-400">Days Left</span><div className={`font-medium ${(p.days_to_expiry || 0) < 30 ? "text-red-600" : "text-gray-700"}`}>{p.days_to_expiry ?? "—"} days</div></div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => viewCoverage(p)} className="flex-1 text-xs py-2 rounded-lg border border-gray-200 hover:bg-gray-50 font-medium">View Coverage</button>
+                <button onClick={() => viewCoverage(p)} className="flex-1 text-xs py-2 rounded-lg border border-gray-200 hover:bg-gray-50 font-medium">View Details</button>
                 {p.status !== "expired" && <button onClick={() => setPage("customer-policy-renewal")} className="flex-1 text-xs py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium">Renew</button>}
               </div>
             </div>
@@ -683,23 +689,25 @@ export function UploadPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="font-semibold text-gray-700 mb-4">Upload Document</div>
           <div className="space-y-3">
-            <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Policy</label>
-              <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" value={form.policy_id} onChange={e => setForm(f => ({ ...f, policy_id: e.target.value }))}>
-                <option value="">-- Select --</option>
-                {policies.length > 0
-                  ? policies.map(p => <option key={p.id} value={p.id}>{p.policy_type} — {p.policy_number}</option>)
-                  : [
-                    { id: "health", label: "Health Insurance" },
-                    { id: "life", label: "Life Insurance" },
-                    { id: "motor", label: "Motor Insurance" },
-                    { id: "home", label: "Home Insurance" },
-                    { id: "travel", label: "Travel Insurance" },
-                    { id: "term", label: "Term Life Insurance" },
-                  ].map(o => <option key={o.id} value={o.id}>{o.label}</option>)
-                }
-              </select>
-            </div>
+            {form.document_type !== "Policy Document" && (
+              <div>
+                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Policy (Optional)</label>
+                <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" value={form.policy_id} onChange={e => setForm(f => ({ ...f, policy_id: e.target.value }))}>
+                  <option value="">-- Select --</option>
+                  {policies.length > 0
+                    ? policies.map(p => <option key={p.id} value={p.id}>{p.policy_type} — {p.policy_number}</option>)
+                    : [
+                      { id: "health", label: "Health Insurance" },
+                      { id: "life", label: "Life Insurance" },
+                      { id: "motor", label: "Motor Insurance" },
+                      { id: "home", label: "Home Insurance" },
+                      { id: "travel", label: "Travel Insurance" },
+                      { id: "term", label: "Term Life Insurance" },
+                    ].map(o => <option key={o.id} value={o.id}>{o.label}</option>)
+                  }
+                </select>
+              </div>
+            )}
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Document Type</label>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))}>
