@@ -509,89 +509,220 @@ export function RenewalPage() {
   };
 
   if (done) return (
-    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center max-w-md mx-auto">
-      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">✅</div>
-      <div className="text-xl font-bold text-gray-800 mb-2">Renewal Successful!</div>
-      <div className="text-gray-500 text-sm mb-5">Your policy has been renewed for another year.</div>
-      <div className="bg-gray-50 rounded-xl p-4 text-left text-sm space-y-2 mb-5">
-        {[["Policy", done.policy_number], ["Amount Paid", `₹${fmt(done.amount)}`], ["Payment Mode", done.payment_method], ["Transaction ID", done.transaction_id], ["New Expiry", fmtDate(done.new_expiry)]].map(([l, v]) => (
-          <div key={l} className="flex justify-between"><span className="text-gray-500">{l}</span><span className="font-medium text-gray-800">{v}</span></div>
-        ))}
+    <div className="max-w-3xl mx-auto mt-8">
+      <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center shadow-xl shadow-blue-900/5 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-emerald-500" />
+        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-green-50/50">
+          <CheckCircle size={40} className="text-green-500" />
+        </div>
+        <div className="text-2xl font-bold text-gray-800 mb-2">Renewal Successful!</div>
+        <div className="text-gray-500 mb-8">Your policy has been renewed successfully for another year. A copy of the renewed document has been sent to your registered email.</div>
+        
+        <div className="bg-gray-50 rounded-2xl p-6 text-left text-sm space-y-3 mb-8 border border-gray-100">
+          {[
+            ["Policy Number", done.policy_number], 
+            ["Amount Paid", `₹${fmt(done.amount)}`], 
+            ["Payment Mode", done.payment_method], 
+            ["Transaction ID", done.transaction_id], 
+            ["New Expiry Date", fmtDate(done.new_expiry)]
+          ].map(([l, v]) => (
+            <div key={l} className="flex justify-between items-center py-1">
+              <span className="text-gray-500 font-medium">{l}</span>
+              <span className="font-bold text-gray-800 text-right">{v}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => { setDone(null); setSelected(null); setStep(1); }} className="w-full sm:w-auto px-8 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+          Renew Another Policy
+        </button>
       </div>
-      <button onClick={() => { setDone(null); setSelected(null); setStep(1); }} className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-semibold">Renew Another Policy</button>
     </div>
   );
 
   return (
-    <div className="max-w-xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        {["Select Policy", "Review", "Payment", "Done"].map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${step > i + 1 ? "bg-green-500 text-white" : step === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"}`}>{step > i + 1 ? "✓" : i + 1}</div>
-            <span className={`text-xs hidden sm:block ${step === i + 1 ? "text-blue-600 font-semibold" : "text-gray-400"}`}>{s}</span>
-            {i < 3 && <div className="w-8 h-0.5 bg-gray-200 hidden sm:block" />}
-          </div>
-        ))}
-      </div>
+    <div className="max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Side: Wizard */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-sm">
+            <div className="flex justify-between items-center mb-8 relative">
+              {/* Progress Line */}
+              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-100 -z-10 -translate-y-1/2 hidden sm:block"></div>
+              
+              {["Select Policy", "Review", "Payment", "Done"].map((s, i) => {
+                const isActive = step === i + 1;
+                const isPast = step > i + 1;
+                return (
+                  <div key={s} className="flex flex-col items-center gap-2 bg-white px-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${isPast ? "bg-green-500 text-white shadow-md shadow-green-500/20" : isActive ? "bg-blue-600 text-white shadow-md shadow-blue-600/20 ring-4 ring-blue-50" : "bg-gray-100 text-gray-400"}`}>
+                      {isPast ? <CheckCircle size={16} /> : i + 1}
+                    </div>
+                    <span className={`text-xs hidden sm:block ${isActive ? "text-blue-600 font-bold" : isPast ? "text-gray-700 font-medium" : "text-gray-400"}`}>{s}</span>
+                  </div>
+                );
+              })}
+            </div>
 
-      {step === 1 && (
-        <div className="space-y-3">
-          {policies.map(p => (
-            <div key={p.id} onClick={() => { setSelected(p); setStep(2); }}
-              className={`bg-white border-2 rounded-xl p-4 cursor-pointer transition-all ${selected?.id === p.id ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-300"}`}>
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold text-gray-800">{p.policy_type}</div>
-                  <div className="font-mono text-xs text-gray-400">{p.policy_number}</div>
+            {step === 1 && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <h3 className="font-bold text-gray-800 mb-4 text-lg">Select a policy to renew</h3>
+                {policies.length === 0 ? (
+                  <div className="py-12 text-center text-gray-500">
+                    <Folder size={40} className="mx-auto text-gray-300 mb-3" />
+                    <p>No eligible policies found for renewal.</p>
+                  </div>
+                ) : policies.map(p => (
+                  <div key={p.id} onClick={() => { setSelected(p); setStep(2); }}
+                    className={`border-2 rounded-xl p-5 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md ${selected?.id === p.id ? "border-blue-500 bg-blue-50/50 shadow-sm" : "border-gray-100 hover:border-blue-300 bg-white"}`}>
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                      <div>
+                        <div className="font-bold text-gray-800 text-base mb-1">{p.policy_type}</div>
+                        <div className="font-mono text-xs text-gray-500 bg-gray-100 inline-block px-2 py-1 rounded-md">{p.policy_number}</div>
+                      </div>
+                      <div className="sm:text-right">
+                        <div className="text-xl font-black text-blue-600 mb-1">₹{fmt(p.premium)}</div>
+                        <div className="text-xs font-medium text-amber-600 bg-amber-50 inline-block px-2 py-1 rounded-md">Expires {fmtDate(p.expiry_date)}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {step === 2 && selected && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <h3 className="font-bold text-gray-800 mb-5 text-lg">Review Renewal Details</h3>
+                <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 text-sm">
+                    {[
+                      ["Policy Type", selected.policy_type], 
+                      ["Policy Number", selected.policy_number], 
+                      ["Current Expiry", fmtDate(selected.expiry_date)], 
+                      ["New Expiry", "Extended by 1 Year"], 
+                      ["Sum Insured", `₹${fmt(selected.coverage_amount)}`], 
+                      ["Premium Due", `₹${fmt(selected.premium)}`]
+                    ].map(([l, v]) => (
+                      <div key={l}>
+                        <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1.5">{l}</div>
+                        <div className="font-bold text-gray-800 text-base">{v}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-blue-600">₹{fmt(p.premium)}</div>
-                  <div className="text-xs text-gray-400">Expires {fmtDate(p.expiry_date)}</div>
+                <div className="flex items-start gap-3 bg-blue-50 rounded-xl p-4 text-sm text-blue-800 mb-6 border border-blue-100">
+                  <Shield size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold block mb-0.5">Secure Transaction</span>
+                    Your payment is secured with 256-bit encryption. The renewed policy document will be emailed to you instantly after payment.
+                  </div>
+                </div>
+                <div className="flex flex-col-reverse sm:flex-row gap-3">
+                  <button onClick={() => setStep(1)} className="w-full sm:w-1/3 border-2 border-gray-200 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors">← Back</button>
+                  <button onClick={() => setStep(3)} className="w-full sm:w-2/3 bg-blue-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all">Proceed to Payment →</button>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && selected && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <h3 className="font-bold text-gray-800 mb-5 text-lg">Choose Payment Method</h3>
+                <div className="space-y-3 mb-6">
+                  {["UPI", "Net Banking", "Credit/Debit Card", "NEFT/RTGS"].map(m => (
+                    <label key={m} className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${method === m ? "border-blue-500 bg-blue-50/50 shadow-sm" : "border-gray-100 hover:border-gray-300"}`}>
+                      <input type="radio" className="hidden" checked={method === m} onChange={() => setMethod(m)} />
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${method === m ? "border-blue-600" : "border-gray-300"}`}>
+                        {method === m && <div className="w-2.5 h-2.5 bg-blue-600 rounded-full" />}
+                      </div>
+                      <span className={`font-bold ${method === m ? "text-blue-900" : "text-gray-700"}`}>{m}</span>
+                    </label>
+                  ))}
+                </div>
+                
+                <div className="flex justify-between items-center bg-gray-900 text-white p-5 rounded-xl mb-6 shadow-lg">
+                  <span className="font-medium">Total Amount Payable</span>
+                  <span className="text-2xl font-black">₹{fmt(selected.premium)}</span>
+                </div>
+
+                <div className="flex flex-col-reverse sm:flex-row gap-3">
+                  <button onClick={() => setStep(2)} className="w-full sm:w-1/3 border-2 border-gray-200 py-3.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">← Back</button>
+                  <button onClick={renew} disabled={loading} className="w-full sm:w-2/3 bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 disabled:bg-gray-400 disabled:shadow-none transition-all">
+                    {loading ? <><Spinner size="sm" /> Processing Securely…</> : `Pay ₹${fmt(selected.premium)} Securely`}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side: Info Panel */}
+        <div className="space-y-6">
+          {selected && step > 1 && (
+            <div className="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-2xl p-6 text-white shadow-xl shadow-blue-900/10 animate-in fade-in zoom-in-95 duration-300">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <CheckCircle size={20} className="text-blue-300" />
+                Renewal Summary
+              </h3>
+              <div className="space-y-4 text-blue-100 text-sm">
+                <div>
+                  <div className="text-blue-300 text-xs font-semibold uppercase tracking-wider mb-1">Policy Number</div>
+                  <div className="font-mono text-white text-base bg-white/10 inline-block px-2 py-0.5 rounded">{selected.policy_number}</div>
+                </div>
+                <div>
+                  <div className="text-blue-300 text-xs font-semibold uppercase tracking-wider mb-1">Sum Insured</div>
+                  <div className="font-bold text-white text-lg">₹{fmt(selected.coverage_amount)}</div>
+                </div>
+                <div className="w-full h-px bg-blue-500/50 my-2" />
+                <div className="flex justify-between items-end">
+                  <span className="text-blue-200 font-medium">Total Premium</span> 
+                  <span className="font-black text-white text-2xl">₹{fmt(selected.premium)}</span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {step === 2 && selected && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="font-semibold text-gray-800 mb-4">Review Renewal Details</h3>
-          <div className="grid grid-cols-2 gap-3 text-sm mb-4">
-            {[["Policy Type", selected.policy_type], ["Policy Number", selected.policy_number], ["Current Expiry", fmtDate(selected.expiry_date)], ["New Expiry", "One year extension"], ["Sum Insured", `₹${fmt(selected.coverage_amount)}`], ["Premium Due", `₹${fmt(selected.premium)}`]].map(([l, v]) => (
-              <div key={l}><div className="text-xs text-gray-400 font-semibold uppercase">{l}</div><div className="font-semibold text-gray-800">{v}</div></div>
-            ))}
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <h3 className="font-bold text-gray-800 mb-5 flex items-center gap-2 text-lg">
+              <Shield size={22} className="text-blue-500" /> 
+              Why Renew Online?
+            </h3>
+            <ul className="space-y-5 text-sm text-gray-600">
+              <li className="flex gap-4 items-start">
+                <div className="mt-0.5 bg-green-100 p-1.5 rounded-lg text-green-600"><CheckCircle size={18} /></div>
+                <div>
+                  <span className="font-bold text-gray-800 block mb-0.5">Instant Issuance</span>
+                  Get your renewed policy document downloaded immediately.
+                </div>
+              </li>
+              <li className="flex gap-4 items-start">
+                <div className="mt-0.5 bg-blue-100 p-1.5 rounded-lg text-blue-600"><RefreshCw size={18} /></div>
+                <div>
+                  <span className="font-bold text-gray-800 block mb-0.5">No Break in Coverage</span>
+                  Ensure seamless continuity of your insurance benefits.
+                </div>
+              </li>
+              <li className="flex gap-4 items-start">
+                <div className="mt-0.5 bg-amber-100 p-1.5 rounded-lg text-amber-600"><Ticket size={18} /></div>
+                <div>
+                  <span className="font-bold text-gray-800 block mb-0.5">Exclusive Discounts</span>
+                  Online renewals come with zero hidden processing fees.
+                </div>
+              </li>
+            </ul>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-700 mb-4">GST inclusive. Policy document will be emailed after payment.</div>
-          <div className="flex gap-2">
-            <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 py-2.5 rounded-xl text-sm font-medium">← Back</button>
-            <button onClick={() => setStep(3)} className="flex-1 bg-blue-600 text-white py-2.5 rounded-xl text-sm font-semibold">Review Payment →</button>
+          
+          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-5 text-center">
+             <div className="text-gray-400 mb-2">Need help with renewal?</div>
+             <a href="#/chat" className="text-blue-600 font-bold hover:underline flex justify-center items-center gap-1.5">
+               <MessageSquare size={16} /> Chat with AI Assistant
+             </a>
           </div>
         </div>
-      )}
 
-      {step === 3 && selected && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="font-semibold text-gray-800 mb-4">Choose Payment Method</h3>
-          {["UPI", "Net Banking", "Credit/Debit Card", "NEFT/RTGS"].map(m => (
-            <label key={m} className={`flex items-center gap-3 p-3 border-2 rounded-xl mb-2 cursor-pointer ${method === m ? "border-blue-500 bg-blue-50" : "border-gray-200"}`}>
-              <input type="radio" name="pay" value={m} checked={method === m} onChange={() => setMethod(m)} className="accent-blue-600" />
-              <span className="text-sm font-medium">{m}</span>
-            </label>
-          ))}
-          <div className="flex justify-between items-center mt-4 mb-3 bg-gray-50 p-3 rounded-xl">
-            <span className="text-sm text-gray-600">Amount Payable</span>
-            <span className="text-xl font-bold text-blue-600">₹{fmt(selected.premium)}</span>
-          </div>
-          <button onClick={renew} disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2">
-            {loading ? <><Spinner size="sm" /> Processing…</> : `Pay ₹${fmt(selected.premium)} & Renew`}
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
-
 // ─── CUSTOMER: ENDORSEMENTS ───────────────────────────────────────────────────
 export function EndorsementsPage() {
   const [tab, setTab] = useState("address");
