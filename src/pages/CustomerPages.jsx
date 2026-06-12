@@ -175,7 +175,7 @@ export function ChatPage() {
     // If resuming a session, load its history; otherwise show greeting
     api.get("/chat/history", { params: { session_id: sessionId, page: 1, page_size: 100 } })
       .then(r => {
-        const hist = (r.data.history || []).reverse();
+        const hist = (r.data.history || []).reverse().filter(h => !["verify_otp", "otp_sent", "otp_consent_prompt", "otp_invalid", "otp_declined"].includes(h.detected_intent));
         if (hist.length > 0) {
           const loaded = hist.flatMap(h => [
             { role: "user", content: h.user_message, time: new Date(h.created_at) },
@@ -205,12 +205,24 @@ export function ChatPage() {
     const msg = text || input.trim();
     if (!msg || loading) return;
     setInput("");
-    setMessages(m => [...m, { role: "user", content: msg, time: new Date() }]);
+    
+    const isOTP = messages.length > 0 && messages[messages.length - 1].intent === "verify_otp" && /^\d{6}$/.test(msg);
+    
+    if (!isOTP) {
+      setMessages(m => [...m, { role: "user", content: msg, time: new Date() }]);
+    }
+    
     setLoading(true);
     try {
       const res = await api.post("/chat", { message: msg, session_id: sessionId }, { timeout: 120000 });
       const d = res.data;
-      setMessages(m => [...m, { role: "ai", content: d.response, intent: d.intent, confidence: d.confidence, guardrail: d.guardrail_violated, time: new Date() }]);
+      setMessages(m => {
+        let nextM = [...m];
+        if (isOTP && d.intent !== "otp_invalid") {
+           nextM = nextM.filter(x => !["verify_otp", "otp_sent", "otp_consent_prompt", "otp_invalid", "otp_declined"].includes(x.intent));
+        }
+        return [...nextM, { role: "ai", content: d.response, intent: d.intent, confidence: d.confidence, guardrail: d.guardrail_violated, time: new Date() }];
+      });
     } catch (e) {
       setMessages(m => [...m, { role: "ai", content: "Sorry, I'm having trouble connecting. Please try again.", time: new Date() }]);
     } finally {
@@ -293,14 +305,36 @@ export function ChatPage() {
 
         {/* Input */}
         <div className="p-4 border-t border-gray-100 flex gap-3">
-          <textarea ref={inputRef} rows={1} value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-            placeholder="Ask me anything about your insurance…"
-            className="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all" />
-          <button onClick={() => send()} disabled={!input.trim() || loading}
-            className="w-10 h-10 bg-blue-600 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all flex-shrink-0">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="rotate-90"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-          </button>
+          {messages.length > 0 && messages[messages.length - 1].role === "ai" && messages[messages.length - 1].intent === "verify_otp" && !loading ? (
+            <div className="flex flex-col items-center justify-center gap-2 w-full bg-blue-50/50 rounded-2xl py-4 border border-blue-100">
+              <div className="text-sm font-semibold text-blue-800">Please enter the 6-digit OTP sent to your email</div>
+              <input
+                autoFocus
+                type="text"
+                maxLength={6}
+                placeholder="------"
+                className="w-48 text-center text-3xl tracking-[0.3em] font-mono bg-white border-2 border-blue-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 shadow-inner"
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  e.target.value = val;
+                  if (val.length === 6) {
+                    send(val);
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <>
+              <textarea ref={inputRef} rows={1} value={input} onChange={e => setInput(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+                placeholder="Ask me anything about your insurance…"
+                className="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all" />
+              <button onClick={() => send()} disabled={!input.trim() || loading}
+                className="w-10 h-10 bg-blue-600 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all flex-shrink-0">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="rotate-90"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
