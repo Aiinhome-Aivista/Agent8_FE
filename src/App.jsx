@@ -4,7 +4,7 @@ import { api, AuthCtx, ToastCtx } from "./components/SharedContext";
 import { Toast, Sidebar, Topbar, NotifPanel, NAV } from "./components/SharedComponents";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
-import { CustomerDashboard, ChatPage, PoliciesPage, RenewalPage, EndorsementsPage, UploadPage, EscalationPage, NotificationsPage, ChatHistoryPage } from "./pages/CustomerPages";
+import { CustomerDashboard, ChatPage, PoliciesPage, RenewalPage, EndorsementsPage, UploadPage, EscalationPage, NotificationsPage } from "./pages/CustomerPages";
 import { CSRDashboard, CSRTickets, CSRConversation } from "./pages/CSRPages";
 import { SupervisorDashboard, AIPerformancePage, EscalationMonitor } from "./pages/SupervisorPages";
 import { ComplianceDashboard, AuditLogsPage, GuardrailViolations, SensitiveActionsPage, ExportPage, CSRKnowledgeBase } from "./pages/CompliancePages";
@@ -13,7 +13,7 @@ import { ComplianceDashboard, AuditLogsPage, GuardrailViolations, SensitiveActio
 const PAGE_TITLES = {
   "customer-dashboard": "Dashboard", "customer-ai-assistant": "AI Insurance Assistant", "customer-policies": "My Policies", "customer-documents": "My Documents",
   "customer-policy-renewal": "Policy Renewal",
-  "customer-raise-ticket": "Raise Support Ticket", "customer-notifications": "Notifications", "customer-chat-history": "Chat History",
+  "customer-raise-ticket": "Raise Support Ticket", "customer-notifications": "Notifications",
   "csr-dashboard": "CSR Dashboard", "csr-all-tickets": "Manage Tickets", "csr-conversation-view": "Conversation Viewer", "csr-knowledge-base": "Knowledge Base",
   "supervisor-dashboard": "Operations Dashboard", "supervisor-ai-performance": "AI Performance", "supervisor-escalation-monitor": "Escalation Monitor",
   "compliance-hub": "Compliance Hub", "compliance-audit-logs": "Audit Logs", "compliance-guardrail-alerts": "Guardrail Violations",
@@ -49,7 +49,6 @@ function MainLayout({ user, onLogout }) {
       case "customer-policy-renewal": return <RenewalPage />;
       case "customer-raise-ticket": return <EscalationPage />;
       case "customer-notifications": return <NotificationsPage />;
-      case "customer-chat-history": return <ChatHistoryPage />;
       case "csr-dashboard": return <CSRDashboard setPage={setPage} />;
       case "csr-all-tickets": return <CSRTickets />;
       case "csr-conversation-view": return <CSRConversation />;

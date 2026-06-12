@@ -30,5 +30,15 @@ export function useToast() { return useContext(ToastCtx); }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 export const fmt = (n) => new Intl.NumberFormat("en-IN").format(n);
-export const fmtDate = (d) => d ? new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—";
-export const timeAgo = (d) => { const s = (Date.now() - new Date(d)) / 1000; if (s < 60) return "just now"; if (s < 3600) return `${Math.floor(s / 60)}m ago`; if (s < 86400) return `${Math.floor(s / 3600)}h ago`; return `${Math.floor(s / 86400)}d ago`; };
+export const parseDate = (d) => {
+  if (!d) return new Date();
+  if (typeof d === 'string') {
+    let s = d;
+    if (!s.includes('T')) s = s.replace(' ', 'T');
+    if (!s.endsWith('Z') && !s.includes('+') && !s.includes('GMT')) s += 'Z';
+    return new Date(s);
+  }
+  return new Date(d);
+};
+export const fmtDate = (d) => d ? parseDate(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+export const timeAgo = (d) => { const s = (Date.now() - parseDate(d)) / 1000; if (s < 60) return "just now"; if (s < 3600) return `${Math.floor(s / 60)}m ago`; if (s < 86400) return `${Math.floor(s / 3600)}h ago`; return `${Math.floor(s / 86400)}d ago`; };

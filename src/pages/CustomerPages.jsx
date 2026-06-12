@@ -1,8 +1,9 @@
+import { Shield, Edit3, Folder, Ticket, Bell, MessageSquare, RefreshCw, CheckCircle, Settings, CreditCard, Megaphone, FileText, Image, UploadCloud, Trash2 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo } from "../components/SharedContext";
+import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo, parseDate } from "../components/SharedContext";
 import { Badge, KpiCard, Spinner, PageLoader, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
 
 // ─── SHARED HELPER: strip JSON wrappers from LLM responses ───────────────────
@@ -160,6 +161,18 @@ export function ChatPage() {
   const messagesEnd = useRef(null);
   const inputRef = useRef(null);
 
+  const [sessions, setSessions] = useState([]);
+  const [loadingSessions, setLoadingSessions] = useState(true);
+
+  const loadSessions = useCallback(() => {
+    api.get("/chat/sessions")
+      .then(r => setSessions(r.data.sessions || []))
+      .catch(() => {})
+      .finally(() => setLoadingSessions(false));
+  }, []);
+
+  useEffect(() => { loadSessions(); }, [loadSessions]);
+
   const startNewChat = () => {
     const newId = crypto.randomUUID();
     sessionStorage.setItem("active_session_id", newId);
@@ -178,8 +191,8 @@ export function ChatPage() {
         const hist = (r.data.history || []).reverse().filter(h => !["verify_otp", "otp_sent", "otp_consent_prompt", "otp_invalid", "otp_declined"].includes(h.detected_intent));
         if (hist.length > 0) {
           const loaded = hist.flatMap(h => [
-            { role: "user", content: h.user_message, time: new Date(h.created_at) },
-            { role: "ai", content: cleanAiResponse(h.ai_response), intent: h.detected_intent, confidence: h.confidence_score, time: new Date(h.created_at) },
+            { role: "user", content: h.user_message, time: parseDate(h.created_at) },
+            { role: "ai", content: cleanAiResponse(h.ai_response), intent: h.detected_intent, confidence: h.confidence_score, time: parseDate(h.created_at) },
           ]);
           setMessages(loaded);
         } else {
@@ -223,6 +236,7 @@ export function ChatPage() {
         }
         return [...nextM, { role: "ai", content: d.response, intent: d.intent, confidence: d.confidence, guardrail: d.guardrail_violated, time: new Date() }];
       });
+      loadSessions();
     } catch (e) {
       setMessages(m => [...m, { role: "ai", content: "Sorry, I'm having trouble connecting. Please try again.", time: new Date() }]);
     } finally {
@@ -236,6 +250,41 @@ export function ChatPage() {
 
   return (
     <div className="flex h-[calc(100vh-8rem)] gap-4">
+      {/* INJECTED: Chat History Sidebar */}
+      <div className="w-64 bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden hidden md:flex">
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <div className="font-semibold text-gray-800 text-sm">Chat History</div>
+          <button onClick={startNewChat} className="text-gray-500 hover:text-blue-600 transition-colors" title="New Chat">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+          {loadingSessions ? (
+            <div className="p-4 flex justify-center"><Spinner size="sm" /></div>
+          ) : sessions.length === 0 ? (
+            <div className="p-4 text-xs text-gray-500 text-center">No previous chats</div>
+          ) : (
+            sessions.map(s => (
+              <button 
+                key={s.session_id} 
+                onClick={() => setSessionId(s.session_id)} 
+                className={`w-full text-left p-3 rounded-lg text-sm transition-all flex flex-col gap-1 ${sessionId === s.session_id ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50 border border-transparent'}`}
+              >
+                <div className={`truncate ${sessionId === s.session_id ? 'font-semibold text-blue-800' : 'font-medium text-gray-700'}`}>
+                  {s.title}
+                </div>
+                <div className="flex justify-between items-center text-xs text-gray-400">
+                  <span className="truncate flex-1 pr-2 capitalize">
+                    {s.intent !== 'faq' && s.intent ? s.intent.replace(/_/g, ' ') : 'General'}
+                  </span>
+                  <span className="flex-shrink-0">{timeAgo(s.last_at)}</span>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+
       {/* Main Chat Panel */}
       <div className="flex flex-col flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden">
         {/* Header */}
@@ -335,43 +384,9 @@ export function ChatPage() {
               </button>
             </>
           )}
+          </div>
         </div>
       </div>
-
-      {/* INJECTED: AI Summary Panel */}
-      {messages.length > 0 && (
-        <div className="w-64 bg-white rounded-xl border border-gray-200 p-4 hidden lg:block overflow-y-auto">
-          <div className="font-semibold text-gray-800 mb-4 text-sm flex items-center gap-2">
-            <span className="text-blue-600">🧠</span> AI Insight
-          </div>
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Detected Intent</div>
-              <div className="text-sm font-bold text-gray-800 capitalize">
-                {(messages[messages.length - 1].intent || "Pending").replace(/_/g, " ")}
-              </div>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Confidence Score</div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-green-500 h-full" style={{ width: `${(messages[messages.length - 1].confidence || 0) * 100}%` }} />
-                </div>
-                <div className="text-sm font-bold text-gray-800">
-                  {messages[messages.length - 1].confidence ? `${Math.round(messages[messages.length - 1].confidence * 100)}%` : "--"}
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <div className="text-xs text-gray-500 uppercase font-semibold mb-1">Active Workflow</div>
-              <div className="text-sm font-bold text-indigo-600">
-                {messages[messages.length - 1].worker_used || "Router"}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -434,7 +449,7 @@ export function PoliciesPage({ setPage }) {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {policies.length === 0 ? <EmptyState icon="🛡️" title="No policies found" desc="Your policies will appear here" /> : policies.map(p => (
+        {policies.length === 0 ? <EmptyState icon={Shield} title="No policies found" desc="Your policies will appear here" /> : policies.map(p => (
           <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className={`h-1 ${p.status === "active" ? "bg-green-500" : p.status === "pending" ? "bg-amber-500" : "bg-red-500"}`} />
             <div className="p-4">
@@ -644,7 +659,7 @@ export function EndorsementsPage() {
 
       <div className="bg-white rounded-xl border border-gray-200">
         <div className="p-4 border-b border-gray-100 font-semibold text-gray-700">Endorsement History</div>
-        {history.length === 0 ? <EmptyState icon="✏️" title="No endorsements yet" /> : (
+        {history.length === 0 ? <EmptyState icon={Edit3} title="No endorsements yet" /> : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50"><tr>{["Date", "Type", "Policy", "Old Value", "New Value", "Status"].map(h => <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase">{h}</th>)}</tr></thead>
@@ -749,7 +764,7 @@ export function UploadPage() {
               </select>
             </div>
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all" onClick={() => fileRef.current?.click()}>
-              <div className="text-3xl mb-2">📤</div>
+              <div className="flex justify-center mb-2 text-blue-500"><UploadCloud size={32} /></div>
               <div className="text-sm font-medium text-gray-600">{file ? file.name : "Drop file or click to browse"}</div>
               <div className="text-xs text-gray-400 mt-1">PDF, JPG, PNG up to 10MB</div>
               <input ref={fileRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png,.txt" onChange={e => setFile(e.target.files[0])} />
@@ -766,17 +781,17 @@ export function UploadPage() {
           <div className="font-semibold text-gray-700">Uploaded Documents</div>
           <Badge color="blue">{docs.length} files</Badge>
         </div>
-        {docs.length === 0 ? <EmptyState icon="📁" title="No documents uploaded" desc="Upload your policy documents to get started" /> : (
+        {docs.length === 0 ? <EmptyState icon={Folder} title="No documents uploaded" desc="Upload your policy documents to get started" /> : (
           <div className="divide-y divide-gray-100">
             {docs.map(d => (
               <div key={d.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="text-xl">{d.file_name.endsWith(".pdf") ? "📄" : "🖼️"}</span>
+                <span className="text-gray-500">{d.file_name.endsWith(".pdf") ? <FileText size={20} /> : <Image size={20} />}</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-gray-800 truncate">{d.file_name}</div>
                   <div className="text-xs text-gray-400">{d.document_type} · {fmtDate(d.uploaded_at)}</div>
                 </div>
                 <Badge color={d.is_processed ? "green" : "amber"}>{d.is_processed ? "Indexed" : "Processing"}</Badge>
-                <button onClick={() => deleteDoc(d.id)} className="text-gray-400 hover:text-red-500 text-sm">🗑️</button>
+                <button onClick={() => deleteDoc(d.id)} className="text-gray-400 hover:text-red-500 text-sm"><Trash2 size={18} /></button>
               </div>
             ))}
           </div>
@@ -877,10 +892,11 @@ export function EscalationPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200">
-        <div className="p-4 border-b border-gray-100 font-semibold text-gray-700">My Tickets</div>
-        {tickets.length === 0 ? <EmptyState icon="🎫" title="No tickets yet" /> : (
-          <div className="divide-y divide-gray-100">
+      <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-[calc(100vh-8rem)]">
+        <div className="p-4 border-b border-gray-100 font-semibold text-gray-700 flex-shrink-0">My Tickets</div>
+        <div className="flex-1 overflow-y-auto">
+          {tickets.length === 0 ? <EmptyState icon={Ticket} title="No tickets yet" /> : (
+            <div className="divide-y divide-gray-100">
             {tickets.map(t => (
               <div key={t.id} className="p-4">
                 <div className="flex justify-between items-start mb-1">
@@ -920,6 +936,7 @@ export function EscalationPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
@@ -937,7 +954,7 @@ export function NotificationsPage() {
   const markRead = async (id) => { await api.patch(`/notifications/${id}/read`); reload(); };
   const markAll = async () => { await api.patch("/notifications/read-all"); reload(); toast("All notifications marked as read", "success"); };
 
-  const typeIcon = { renewal: "🔄", escalation: "🎫", update: "✏️", claim: "✅", system: "⚙️", payment: "💳" };
+  const typeIcon = { renewal: RefreshCw, escalation: Ticket, update: Edit3, claim: CheckCircle, system: Settings, payment: CreditCard };
   const typeColor = { renewal: "amber", escalation: "red", update: "blue", claim: "green", system: "slate", payment: "purple" };
 
   return (
@@ -947,10 +964,10 @@ export function NotificationsPage() {
         <button onClick={markAll} className="text-xs text-blue-600 hover:underline">Mark all as read</button>
       </div>
       <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-        {notifs.length === 0 ? <EmptyState icon="🔔" title="No notifications" /> : notifs.map(n => (
+        {notifs.length === 0 ? <EmptyState icon={Bell} title="No notifications" /> : notifs.map(n => (
           <div key={n.id} className={`flex gap-3 p-4 cursor-pointer hover:bg-gray-50 ${n.status === "unread" ? "bg-blue-50/40" : ""}`} onClick={() => markRead(n.id)}>
             <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${n.status === "unread" ? "bg-blue-500" : "bg-transparent border border-gray-300"}`} />
-            <span className="text-xl flex-shrink-0">{typeIcon[n.type] || "📢"}</span>
+            {(() => { const IconCmp = typeIcon[n.type] || Megaphone; return <IconCmp size={20} className="text-gray-500 flex-shrink-0 mt-0.5" />; })()}
             <div className="flex-1 min-w-0">
               <div className={`text-sm ${n.status === "unread" ? "font-semibold text-gray-800" : "text-gray-600"}`}>{n.message}</div>
               <div className="flex items-center gap-2 mt-1">
@@ -1020,7 +1037,7 @@ export function ChatHistoryPage({ setPage }) {
             ) : sessions.length === 0 ? (
               <tr>
                 <td colSpan={4} className="p-8 text-center">
-                  <EmptyState icon="💬" title="No chat history" desc="Start a conversation with the AI Assistant" />
+                  <EmptyState icon={MessageSquare} title="No chat history" desc="Start a conversation with the AI Assistant" />
                 </td>
               </tr>
             ) : sessions.map(s => (

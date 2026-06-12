@@ -1,3 +1,4 @@
+import { PartyPopper, Pointer, Mailbox, MessageSquare } from "lucide-react";
 import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,7 +25,7 @@ export function CSRDashboard({ setPage }) {
           <div className="font-semibold text-gray-700">My Open Tickets</div>
           <button onClick={() => setPage("csr-tickets")} className="text-xs text-blue-600 hover:underline">View all</button>
         </div>
-        {(data.recent_tickets || []).length === 0 ? <EmptyState icon="🎉" title="No open tickets!" /> : (data.recent_tickets || []).map(t => (
+        {(data.recent_tickets || []).length === 0 ? <EmptyState icon={PartyPopper} title="No open tickets!" /> : (data.recent_tickets || []).map(t => (
           <div key={t.id} className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
@@ -100,7 +101,7 @@ export function CSRTickets() {
 
       <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-y-auto">
         {!selected ? (
-          <EmptyState icon="👈" title="Select a ticket to manage" desc="Click any ticket on the left to view and update" />
+          <EmptyState icon={Pointer} title="Select a ticket to manage" desc="Click any ticket on the left to view and update" />
         ) : (
           <div className="p-5">
             <div className="flex justify-between items-start mb-4">
@@ -264,7 +265,7 @@ export function CSRConversation() {
       {/* ── Left: Ticket list ── */}
       <div className="w-72 overflow-y-auto space-y-2 flex-shrink-0">
         <div className="text-xs text-gray-400 font-semibold uppercase px-1 mb-1">My Assigned Tickets</div>
-        {tickets.length === 0 && <EmptyState icon="📭" title="No assigned tickets" />}
+        {tickets.length === 0 && <EmptyState icon={Mailbox} title="No assigned tickets" />}
         {tickets.map(t => (
           <div key={t.id} onClick={() => selectTicket(t)}
             className={`border-2 rounded-xl p-3 cursor-pointer transition-all ${selectedTicket?.id === t.id ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white hover:border-blue-300"}`}>
@@ -281,7 +282,7 @@ export function CSRConversation() {
       {/* ── Right: Sessions + messages ── */}
       <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-y-auto flex flex-col">
         {!selectedTicket ? (
-          <EmptyState icon="💬" title="Select a ticket to view conversation" desc="Click any ticket on the left" />
+          <EmptyState icon={MessageSquare} title="Select a ticket to view conversation" desc="Click any ticket on the left" />
         ) : (
           <>
             {/* Header */}
@@ -294,7 +295,7 @@ export function CSRConversation() {
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {loadingS && <div className="flex justify-center py-8"><Spinner size="md" /></div>}
               {!loadingS && sessions.length === 0 && (
-                <EmptyState icon="📭" title="No chat sessions found" desc="This customer has no recorded AI conversations" />
+                <EmptyState icon={Mailbox} title="No chat sessions found" desc="This customer has no recorded AI conversations" />
               )}
               {sessions.map((s, idx) => (
                 <div key={s.session_id} className="border border-gray-200 rounded-xl overflow-hidden bg-gray-50">

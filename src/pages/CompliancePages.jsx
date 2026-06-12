@@ -1,3 +1,4 @@
+import { ClipboardList, CheckCircle, Eye } from "lucide-react";
 import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -91,7 +92,7 @@ export function AuditLogsPage() {
             </tbody>
           </table>
         </div>
-        {!loading && logs.length === 0 && <EmptyState icon="📋" title="No audit logs match filter" />}
+        {!loading && logs.length === 0 && <EmptyState icon={ClipboardList} title="No audit logs match filter" />}
       </div>
     </div>
   );
@@ -103,7 +104,7 @@ export function GuardrailViolations() {
   useEffect(() => { api.get("/compliance/guardrail-violations").then(r => setViolations(r.data.violations || [])); }, []);
   return (
     <div className="space-y-3">
-      {violations.length === 0 ? <EmptyState icon="✅" title="No guardrail violations" desc="All conversations within policy" /> : violations.map(v => (
+      {violations.length === 0 ? <EmptyState icon={CheckCircle} title="No guardrail violations" desc="All conversations within policy" /> : violations.map(v => (
         <div key={v.id} className="bg-amber-50 border border-amber-200 rounded-xl p-4">
           <div className="flex justify-between items-start mb-2">
             <div className="flex items-center gap-2">
@@ -128,7 +129,7 @@ export function SensitiveActionsPage() {
   return (
     <div className="bg-white rounded-xl border border-gray-200">
       <div className="p-4 border-b border-gray-100 font-semibold text-gray-700">Sensitive Actions</div>
-      {actions.length === 0 ? <EmptyState icon="👁️" title="No sensitive actions" /> : (
+      {actions.length === 0 ? <EmptyState icon={Eye} title="No sensitive actions" /> : (
         <table className="w-full text-sm">
           <thead className="bg-gray-50"><tr>{["User", "Action", "Details", "Time", "Severity"].map(h => <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500">{h}</th>)}</tr></thead>
           <tbody>{actions.map(a => (

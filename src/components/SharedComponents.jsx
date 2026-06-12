@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { Home, Bot, Shield, Upload, RefreshCw, Ticket, Bell, MessageSquare, BookOpen, Brain, AlertTriangle, ClipboardList, Siren, Eye, Download, Info, Edit3, CheckCircle, Settings, CreditCard, Megaphone, LogOut, Menu, X } from "lucide-react";
 
 import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo } from "./SharedContext";
 
@@ -35,12 +36,15 @@ export function PageLoader({ text = "Loading..." }) {
   );
 }
 
-export function EmptyState({ icon = "📭", title, desc }) {
+export function EmptyState({ icon, title, desc }) {
+  const IconComponent = icon || Info;
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center text-gray-400">
-      <div className="text-5xl mb-3 opacity-40">{icon}</div>
-      <div className="font-semibold text-gray-600">{title}</div>
-      {desc && <div className="text-sm mt-1">{desc}</div>}
+    <div className="flex flex-col items-center justify-center p-12 text-center">
+      <div className="mb-4 text-slate-300">
+        {typeof icon === "string" ? <span className="text-4xl opacity-50">{icon}</span> : <IconComponent size={48} strokeWidth={1.5} className="text-slate-400" />}
+      </div>
+      <div className="text-gray-800 font-semibold mb-1">{title}</div>
+      {desc && <div className="text-sm text-gray-500 max-w-sm">{desc}</div>}
     </div>
   );
 }
@@ -62,32 +66,31 @@ export function Toast({ toasts, remove }) {
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 export const NAV = {
   customer: [
-    { id: "customer-dashboard", label: "Dashboard", icon: "🏠" },
-    { id: "customer-ai-assistant", label: "AI Assistant", icon: "🤖" },
-    { id: "customer-policies", label: "My Policies", icon: "🛡️" },
-    { id: "customer-documents", label: "My Documents", icon: "📤" },
-    { id: "customer-policy-renewal", label: "Policy Renewal", icon: "🔄" },
-    { id: "customer-raise-ticket", label: "Raise Ticket", icon: "🎫" },
-    { id: "customer-notifications", label: "Notifications", icon: "🔔" },
-    { id: "customer-chat-history", label: "Chat History", icon: "📜" },
+    { id: "customer-dashboard", label: "Dashboard", icon: Home },
+    { id: "customer-ai-assistant", label: "AI Assistant", icon: Bot },
+    { id: "customer-policies", label: "My Policies", icon: Shield },
+    { id: "customer-documents", label: "My Documents", icon: Upload },
+    { id: "customer-policy-renewal", label: "Policy Renewal", icon: RefreshCw },
+    { id: "customer-raise-ticket", label: "Raise Ticket", icon: Ticket },
+    { id: "customer-notifications", label: "Notifications", icon: Bell }
   ],
   csr: [
-    { id: "csr-dashboard", label: "Dashboard", icon: "🏠" },
-    { id: "csr-all-tickets", label: "All Tickets", icon: "🎫" },
-    { id: "csr-conversation-view", label: "Conversation View", icon: "💬" },
-    { id: "csr-knowledge-base", label: "Knowledge Base", icon: "📚" },
+    { id: "csr-dashboard", label: "Dashboard", icon: Home },
+    { id: "csr-all-tickets", label: "All Tickets", icon: Ticket },
+    { id: "csr-conversation-view", label: "Conversation View", icon: MessageSquare },
+    { id: "csr-knowledge-base", label: "Knowledge Base", icon: BookOpen },
   ],
   supervisor: [
-    { id: "supervisor-dashboard", label: "KPI Dashboard", icon: "🏠" },
-    { id: "supervisor-ai-performance", label: "AI Performance", icon: "🧠" },
-    { id: "supervisor-escalation-monitor", label: "Escalation Monitor", icon: "⚠️" },
+    { id: "supervisor-dashboard", label: "KPI Dashboard", icon: Home },
+    { id: "supervisor-ai-performance", label: "AI Performance", icon: Brain },
+    { id: "supervisor-escalation-monitor", label: "Escalation Monitor", icon: AlertTriangle },
   ],
   compliance: [
-    { id: "compliance-hub", label: "Compliance Hub", icon: "🏠" },
-    { id: "compliance-audit-logs", label: "Audit Logs", icon: "📋" },
-    { id: "compliance-guardrail-alerts", label: "Guardrail Alerts", icon: "🚨" },
-    { id: "compliance-sensitive-actions", label: "Sensitive Actions", icon: "👁️" },
-    { id: "compliance-export-reports", label: "Export Reports", icon: "📥" },
+    { id: "compliance-hub", label: "Compliance Hub", icon: Home },
+    { id: "compliance-audit-logs", label: "Audit Logs", icon: ClipboardList },
+    { id: "compliance-guardrail-alerts", label: "Guardrail Alerts", icon: Siren },
+    { id: "compliance-sensitive-actions", label: "Sensitive Actions", icon: Eye },
+    { id: "compliance-export-reports", label: "Export Reports", icon: Download },
   ],
 };
 
@@ -104,8 +107,8 @@ export function Sidebar({ page, setPage, user, onLogout }) {
             <div className="font-bold text-slate-100 whitespace-nowrap">InsureAI</div>
           </div>
         )}
-        <button onClick={() => setCollapsed(!collapsed)} className="text-slate-400 hover:text-white text-xl leading-none flex-shrink-0" title="Toggle Sidebar">
-          ☰
+        <button onClick={() => setCollapsed(!collapsed)} className="text-slate-400 hover:text-white leading-none flex-shrink-0" title="Toggle Sidebar">
+          <Menu size={20} />
         </button>
       </div>
       <div className={`p-3 border-b border-slate-700/60 flex items-center ${collapsed ? "justify-center" : "gap-2.5"}`}>
@@ -121,14 +124,14 @@ export function Sidebar({ page, setPage, user, onLogout }) {
         {nav.map(item => (
           <button key={item.id} onClick={() => setPage(item.id)} title={collapsed ? item.label : ""}
             className={`w-full text-left flex items-center ${collapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2"} rounded-lg text-sm font-medium transition-colors ${page === item.id ? "bg-blue-600/25 text-blue-300" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"}`}>
-            <span className="text-lg flex-shrink-0">{item.icon}</span>
+            <item.icon size={20} className="flex-shrink-0" />
             {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
           </button>
         ))}
       </nav>
       <div className="p-3 border-t border-slate-700/60">
         <button onClick={onLogout} title={collapsed ? "Sign Out" : ""} className={`w-full flex items-center ${collapsed ? "justify-center px-0 py-2" : "gap-3 px-3 py-2"} text-slate-400 hover:text-red-400 text-sm rounded-lg hover:bg-slate-800 transition-colors`}>
-          <span className="text-lg flex-shrink-0">🚪</span>
+          <LogOut size={20} className="flex-shrink-0" />
           {!collapsed && <span className="whitespace-nowrap">Sign Out</span>}
         </button>
       </div>
@@ -142,7 +145,8 @@ export function Topbar({ title, unread = 0, onNotif }) {
       <div className="font-semibold text-gray-800">{title}</div>
       <div className="flex items-center gap-2">
         <button onClick={onNotif} className="relative w-9 h-9 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-500">
-          🔔{unread > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />}
+          <Bell size={20} />
+          {unread > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />}
         </button>
       </div>
     </div>
@@ -153,23 +157,26 @@ export function Topbar({ title, unread = 0, onNotif }) {
 export function NotifPanel({ onClose }) {
   const [notifs, setNotifs] = useState([]);
   useEffect(() => { api.get("/notifications").then(r => setNotifs(r.data.notifications?.slice(0, 8) || [])).catch(() => { }); }, []);
-  const typeIcon = { renewal: "🔄", escalation: "🎫", update: "✏️", claim: "✅", system: "⚙️", payment: "💳" };
+  const typeIcon = { renewal: RefreshCw, escalation: Ticket, update: Edit3, claim: CheckCircle, system: Settings, payment: CreditCard };
   return (
     <div className="fixed inset-0 z-50" onClick={onClose}>
       <div className="absolute top-14 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" onClick={e => e.stopPropagation()}>
         <div className="p-4 border-b border-gray-100 flex justify-between items-center">
           <div className="font-semibold text-gray-800">Notifications</div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
         </div>
-        {notifs.map(n => (
+        {notifs.map(n => {
+          const IconCmp = typeIcon[n.type] || Megaphone;
+          return (
           <div key={n.id} className={`flex gap-3 p-3 border-b border-gray-50 ${n.status === "unread" ? "bg-blue-50/50" : ""}`}>
-            <span>{typeIcon[n.type] || "📢"}</span>
+            <IconCmp size={18} className="text-gray-500 mt-0.5" />
             <div>
               <div className={`text-xs ${n.status === "unread" ? "font-semibold text-gray-800" : "text-gray-600"}`}>{n.message}</div>
               <div className="text-xs text-gray-400 mt-0.5">{timeAgo(n.created_at)}</div>
             </div>
           </div>
-        ))}
+          )
+        })}
         {notifs.length === 0 && <div className="p-6 text-center text-gray-400 text-sm">No notifications</div>}
       </div>
     </div>

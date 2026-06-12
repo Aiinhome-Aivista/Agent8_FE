@@ -1,3 +1,4 @@
+import { BarChart2, LineChart, Trophy, Brain } from "lucide-react";
 import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -40,12 +41,12 @@ export function SupervisorDashboard() {
               </div>
             </div>
           ))}
-          {(data.intent_distribution || []).length === 0 && <EmptyState icon="📊" title="No chat data yet" />}
+          {(data.intent_distribution || []).length === 0 && <EmptyState icon={BarChart2} title="No chat data yet" />}
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="font-semibold text-gray-700 mb-3">Daily Chat Volume</div>
-          {(data.daily_volume || []).length === 0 ? <EmptyState icon="📈" title="No volume data yet" /> : (
+          {(data.daily_volume || []).length === 0 ? <EmptyState icon={LineChart} title="No volume data yet" /> : (
             <div className="flex items-end gap-2 h-32">
               {(data.daily_volume || []).map(d => {
                 const max = Math.max(...(data.daily_volume || []).map(x => x.cnt));
@@ -64,7 +65,7 @@ export function SupervisorDashboard() {
 
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="font-semibold text-gray-700 mb-3">Top CSR Performers</div>
-        {(data.top_csrs || []).length === 0 ? <EmptyState icon="🏆" title="No CSR data yet" /> : (
+        {(data.top_csrs || []).length === 0 ? <EmptyState icon={Trophy} title="No CSR data yet" /> : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50"><tr>{["CSR Name", "Assigned", "Resolved", "Resolution Rate"].map(h => <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500">{h}</th>)}</tr></thead>
@@ -112,7 +113,7 @@ export function AIPerformancePage() {
               </div>
             </div>
           ))}
-          {(data.intent_distribution || []).length === 0 && <EmptyState icon="🧠" title="No intent data yet" />}
+          {(data.intent_distribution || []).length === 0 && <EmptyState icon={Brain} title="No intent data yet" />}
         </div>
       </div>
     </div>
