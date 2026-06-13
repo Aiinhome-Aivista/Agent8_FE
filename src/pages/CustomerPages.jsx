@@ -61,87 +61,98 @@ function renderMarkdown(text) {
 
 // ─── CUSTOMER: DASHBOARD ──────────────────────────────────────────────────────
 export function CustomerDashboard({ setPage }) {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   useEffect(() => { api.get("/dashboard/customer").then(r => setData(r.data)).catch(() => { }); }, []);
   if (!data) return <PageLoader />;
 
-  const kbInsights = data.kb_insights || []; // kept for backend compat, not displayed
-
-  // Prefer SQL stats; fall back to LLM-extracted doc stats when SQL has no policies
   const sqlPol = data.policies || {};
   const docPol = data.doc_policies;
   const useDoc = docPol && (sqlPol.active ?? 0) === 0;
   const pol = useDoc ? docPol : sqlPol;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      {/* Welcome Banner */}
+      <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.name || "Customer"}!</h2>
+          <p className="text-blue-100">Manage your policies, track claims, and get instant answers with our AI assistant.</p>
+        </div>
+        <button onClick={() => setPage("customer-chat")} className="whitespace-nowrap bg-white text-blue-700 px-6 py-3 rounded-xl font-bold shadow-md hover:bg-blue-50 transition-colors flex items-center gap-2 flex-shrink-0">
+          <MessageSquare size={20} />
+          Ask AI Assistant
+        </button>
+      </div>
+
       {/* ── KPI Cards ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
         <KpiCard label="Active Policies" value={pol.active ?? 0} sub="In good standing" />
         <KpiCard label="Total Coverage" value={`₹${fmt(Math.round((pol.total_coverage || 0) / 100000))}L`} sub="Across all policies" />
         <KpiCard label="Annual Premium" value={`₹${fmt(Math.round(pol.total_premium || 0))}`} sub="Per year" />
         <KpiCard label="Open Tickets" value={data.open_tickets ?? 0} color={data.open_tickets > 0 ? "text-red-600" : "text-green-600"} sub={data.open_tickets > 0 ? "Needs attention" : "All resolved"} />
       </div>
 
-      {/* ── Source badge when using document-extracted stats ── */}
-      {/* useDoc && (
-        <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5">
-          <span className="text-base">{docPol.source === "kb_documents" ? "🏢" : "📄"}</span>
-          <div className="flex-1">
-            <span className="text-xs font-semibold text-blue-700">
-              {docPol.source === "kb_documents"
-                ? "Stats extracted from company knowledge base documents"
-                : "Stats extracted from your uploaded documents"}
-            </span>
-            {docPol.policy_number && (
-              <span className="text-xs text-blue-500 ml-2">· Policy: <span className="font-mono">{docPol.policy_number}</span></span>
-            )}
-            {docPol.insurer && (
-              <span className="text-xs text-blue-500 ml-2">· {docPol.insurer}</span>
-            )}
-            {docPol.policy_type && (
-              <span className="text-xs text-gray-400 ml-2">· {docPol.policy_type}</span>
-            )}
-          </div>
-          <span className="text-xs text-gray-400 bg-white border border-blue-100 rounded-full px-2 py-0.5">AI Extracted</span>
-        </div>
-      ) */}
-
       {/* ── Expiring Soon ── */}
       {data.expiring_soon?.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <div className="font-semibold text-amber-800 mb-2">⚠️ Expiring Soon</div>
-          {data.expiring_soon.map(p => (
-            <div key={p.policy_number} className="flex justify-between items-center text-sm py-1">
-              <span className="text-amber-700 font-medium">{p.policy_type} — {p.policy_number}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-amber-600">{p.days} days left ({fmtDate(p.expiry_date)})</span>
-                <button onClick={() => setPage("customer-policy-renewal")} className="text-xs bg-amber-600 text-white px-3 py-1 rounded-lg hover:bg-amber-700">Renew</button>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <div className="font-bold text-amber-800 mb-3 flex items-center gap-2">
+            <span className="text-lg">⚠️</span> Policies Expiring Soon
+          </div>
+          <div className="space-y-2">
+            {data.expiring_soon.map(p => (
+              <div key={p.policy_number} className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm py-2 px-4 bg-white rounded-xl border border-amber-100 shadow-sm">
+                <span className="text-amber-900 font-semibold mb-2 sm:mb-0">{p.policy_type} <span className="text-amber-500 font-mono ml-2">{p.policy_number}</span></span>
+                <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+                  <span className="text-amber-700 font-medium">{p.days} days left <span className="text-amber-400 text-xs hidden md:inline ml-1">({fmtDate(p.expiry_date)})</span></span>
+                  <button onClick={() => setPage("customer-policy-renewal")} className="text-sm bg-amber-500 text-white px-4 py-1.5 rounded-lg hover:bg-amber-600 font-bold transition-colors shadow-sm shadow-amber-500/20">Renew Now</button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
-      {/* ── Recent Activity ── */}
-      {/* data.recent_activity?.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200">
-          <div className="p-4 border-b border-gray-100 font-semibold text-gray-700">Recent Activity</div>
-          {data.recent_activity.map((a, i) => (
-            <div key={i} className="flex items-start gap-3 px-4 py-3 border-b border-gray-50 last:border-0">
-              <div className="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0" />
-              <div>
-                <div className="text-sm text-gray-800">{a.details}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{timeAgo(a.created_at)}</div>
-              </div>
+      {/* Quick Actions Grid */}
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button onClick={() => setPage("customer-documents")} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-2xl hover:border-blue-400 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors mb-3">
+              <UploadCloud size={26} />
             </div>
-          ))}
+            <span className="font-bold text-gray-800">Upload Document</span>
+            <span className="text-xs text-gray-500 mt-1 text-center font-medium">Add claims or proofs</span>
+          </button>
+          
+          <button onClick={() => setPage("customer-escalation")} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-2xl hover:border-amber-400 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors mb-3">
+              <Ticket size={26} />
+            </div>
+            <span className="font-bold text-gray-800">Raise Ticket</span>
+            <span className="text-xs text-gray-500 mt-1 text-center font-medium">Get help with issues</span>
+          </button>
+
+          <button onClick={() => setPage("customer-policy-renewal")} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-2xl hover:border-green-400 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-green-600 group-hover:bg-green-500 group-hover:text-white transition-colors mb-3">
+              <RefreshCw size={26} />
+            </div>
+            <span className="font-bold text-gray-800">Renew Policy</span>
+            <span className="text-xs text-gray-500 mt-1 text-center font-medium">Extend your coverage</span>
+          </button>
+
+          <button onClick={() => setPage("customer-policies")} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-2xl hover:border-indigo-400 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors mb-3">
+              <Shield size={26} />
+            </div>
+            <span className="font-bold text-gray-800">View Policies</span>
+            <span className="text-xs text-gray-500 mt-1 text-center font-medium">Check all active plans</span>
+          </button>
         </div>
-      ) */}
+      </div>
     </div>
   );
 }
-
 // ─── CUSTOMER: AI CHAT ────────────────────────────────────────────────────────
 export function ChatPage() {
   const { user } = useAuth();
