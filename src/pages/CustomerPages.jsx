@@ -229,7 +229,7 @@ export function ChatPage() {
     // If resuming a session, load its history; otherwise show greeting
     api.get("/chat/history", { params: { session_id: sessionId, page: 1, page_size: 100 } })
       .then(r => {
-        const hist = (r.data.history || []).reverse().filter(h => !["verify_otp", "otp_sent", "otp_consent_prompt", "otp_invalid", "otp_declined"].includes(h.detected_intent));
+        const hist = (r.data.history || []).reverse();
         if (hist.length > 0) {
           const loaded = hist.flatMap(h => [
             { role: "user", content: h.user_message, time: parseDate(h.created_at) },
