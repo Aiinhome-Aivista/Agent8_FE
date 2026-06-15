@@ -212,13 +212,43 @@ function cleanAiMsg(text) {
 // Render basic markdown (bold)
 function renderMarkdown(text) {
   if (!text) return null;
-  const parts = text.split(/(\*\*.*?\*\*)/g);
-  return parts.map((part, i) => {
+  
+  const sourceRegex = /\[Source:\s*(.+?)\]/g;
+  const sources = [];
+  let match;
+  while ((match = sourceRegex.exec(text)) !== null) {
+    if (!sources.includes(match[1])) {
+      sources.push(match[1]);
+    }
+  }
+  
+  const cleanText = text.replace(sourceRegex, "").trim();
+  
+  const parts = cleanText.split(/(\*\*.*?\*\*)/g);
+  const elements = parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return <strong key={i} className="font-semibold text-gray-900">{part.slice(2, -2)}</strong>;
     }
     return <span key={i}>{part}</span>;
   });
+
+  if (sources.length > 0) {
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="whitespace-pre-wrap">{elements}</div>
+        <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-200/60 mt-1">
+          {sources.map((src, i) => (
+            <div key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-gray-200 rounded-md text-[11px] font-medium text-gray-600 shadow-sm">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              {src}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return <span className="whitespace-pre-wrap">{elements}</span>;
 }
 
 export function CSRConversation() {
