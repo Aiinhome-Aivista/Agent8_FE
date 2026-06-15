@@ -125,8 +125,8 @@ export function EscalationMonitor() {
   const [tickets, setTickets] = useState([]);
   useEffect(() => { api.get("/escalations").then(r => setTickets(r.data.escalations || [])); }, []);
 
-  const open = tickets.filter(t => t.status === "open");
-  const high = tickets.filter(t => (t.priority === "high" || t.priority === "critical") && t.status !== "resolved");
+  const open = tickets.filter(t => t.status.toLowerCase() === "open");
+  const high = tickets.filter(t => (t.priority === "high" || t.priority === "critical") && t.status.toLowerCase() !== "resolved");
   const statusColor = { open: "red", "in-progress": "amber", resolved: "green", closed: "slate" };
 
   return (
@@ -135,7 +135,7 @@ export function EscalationMonitor() {
         <KpiCard label="Total Tickets" value={tickets.length} />
         <KpiCard label="Open" value={open.length} color="text-red-600" />
         <KpiCard label="High Priority" value={high.length} color="text-red-600" />
-        <KpiCard label="Resolved" value={tickets.filter(t => t.status === "resolved").length} color="text-green-600" />
+        <KpiCard label="Resolved" value={tickets.filter(t => t.status.toLowerCase() === "resolved").length} color="text-green-600" />
       </div>
       {open.length > 0 && <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-700">⚠️ {open.length} open ticket{open.length > 1 ? "s" : ""} require{open.length === 1 ? "s" : ""} immediate attention.</div>}
       <div className="bg-white rounded-xl border border-gray-200">
@@ -149,7 +149,7 @@ export function EscalationMonitor() {
                 <td className="px-4 py-3">{t.customer_name}</td>
                 <td className="px-4 py-3 max-w-[180px]"><div className="truncate">{t.issue}</div></td>
                 <td className="px-4 py-3"><Badge color={t.priority === "high" || t.priority === "critical" ? "red" : "amber"}>{t.priority}</Badge></td>
-                <td className="px-4 py-3"><Badge color={statusColor[t.status] || "slate"}>{t.status}</Badge></td>
+                <td className="px-4 py-3"><Badge color={statusColor[t.status.toLowerCase()] || "slate"}>{t.status}</Badge></td>
                 <td className="px-4 py-3">{t.assigned_csr_name || <span className="text-gray-400">Unassigned</span>}</td>
                 <td className="px-4 py-3 text-gray-400 whitespace-nowrap">{fmtDate(t.created_at)}</td>
               </tr>
