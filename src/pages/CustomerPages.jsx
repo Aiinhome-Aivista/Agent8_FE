@@ -489,35 +489,41 @@ export function PoliciesPage({ setPage }) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {policies.length === 0 ? <EmptyState icon={Shield} title="No policies found" desc="Your policies will appear here" /> : policies.map(p => (
-          <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className={`h-1 ${p.status === "active" ? "bg-green-500" : p.status === "pending" ? "bg-amber-500" : "bg-red-500"}`} />
-            <div className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{typeIcon[p.policy_type] || "🛡️"}</span>
-                    <span className="font-semibold text-gray-800">{p.policy_type}</span>
+      {policies.length === 0 ? (
+        <div className="flex items-center justify-center min-h-[50vh] w-full">
+          <EmptyState icon={Shield} title="No policies found" desc="Your policies will appear here" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {policies.map(p => (
+            <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className={`h-1 ${p.status === "active" ? "bg-green-500" : p.status === "pending" ? "bg-amber-500" : "bg-red-500"}`} />
+              <div className="p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{typeIcon[p.policy_type] || "🛡️"}</span>
+                      <span className="font-semibold text-gray-800">{p.policy_type}</span>
+                    </div>
+                    <div className="font-mono text-xs text-gray-400 mt-0.5">{p.policy_number}</div>
                   </div>
-                  <div className="font-mono text-xs text-gray-400 mt-0.5">{p.policy_number}</div>
+                  <Badge color={statusColor[p.status] || "slate"}>{p.status}</Badge>
                 </div>
-                <Badge color={statusColor[p.status] || "slate"}>{p.status}</Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 mb-3">
-                <div><span className="text-gray-400">Coverage</span><div className="font-semibold text-gray-700 text-sm">₹{fmt(p.coverage_amount)}</div></div>
-                <div><span className="text-gray-400">Premium</span><div className="font-semibold text-blue-600 text-sm">₹{fmt(p.premium)}/yr</div></div>
-                <div><span className="text-gray-400">Expiry</span><div className="font-medium text-gray-700">{fmtDate(p.expiry_date)}</div></div>
-                <div><span className="text-gray-400">Days Left</span><div className={`font-medium ${(p.days_to_expiry || 0) < 30 ? "text-red-600" : "text-gray-700"}`}>{p.days_to_expiry ?? "—"} days</div></div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => viewCoverage(p)} className="flex-1 text-xs py-2 rounded-lg border border-gray-200 hover:bg-gray-50 font-medium">View Details</button>
-                {p.status !== "expired" && <button onClick={() => setPage("customer-policy-renewal")} className="flex-1 text-xs py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium">Renew</button>}
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 mb-3">
+                  <div><span className="text-gray-400">Coverage</span><div className="font-semibold text-gray-700 text-sm">₹{fmt(p.coverage_amount)}</div></div>
+                  <div><span className="text-gray-400">Premium</span><div className="font-semibold text-blue-600 text-sm">₹{fmt(p.premium)}/yr</div></div>
+                  <div><span className="text-gray-400">Expiry</span><div className="font-medium text-gray-700">{fmtDate(p.expiry_date)}</div></div>
+                  <div><span className="text-gray-400">Days Left</span><div className={`font-medium ${(p.days_to_expiry || 0) < 30 ? "text-red-600" : "text-gray-700"}`}>{p.days_to_expiry ?? "—"} days</div></div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => viewCoverage(p)} className="flex-1 text-xs py-2 rounded-lg border border-gray-200 hover:bg-gray-50 font-medium">View Details</button>
+                  {p.status !== "expired" && <button onClick={() => setPage("customer-policy-renewal")} className="flex-1 text-xs py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium">Renew</button>}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -609,9 +615,8 @@ export function RenewalPage() {
               <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <h3 className="font-bold text-gray-800 mb-4 text-lg">Select a policy to renew</h3>
                 {policies.length === 0 ? (
-                  <div className="py-12 text-center text-gray-500">
-                    <Folder size={40} className="mx-auto text-gray-300 mb-3" />
-                    <p>No eligible policies found for renewal.</p>
+                  <div className="flex items-center justify-center min-h-[300px] w-full bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                    <EmptyState icon={Folder} title="No policies to renew" desc="You don't have any eligible policies found for renewal at this time." />
                   </div>
                 ) : policies.map(p => (
                   <div key={p.id} onClick={() => { setSelected(p); setStep(2); }}
@@ -910,25 +915,7 @@ export function UploadPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="font-semibold text-gray-700 mb-4">Upload Document</div>
           <div className="space-y-3">
-            {form.document_type !== "Policy Document" && (
-              <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Policy (Optional)</label>
-                <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" value={form.policy_id} onChange={e => setForm(f => ({ ...f, policy_id: e.target.value }))}>
-                  <option value="">-- Select --</option>
-                  {policies.length > 0
-                    ? policies.map(p => <option key={p.id} value={p.id}>{p.policy_type} — {p.policy_number}</option>)
-                    : [
-                      { id: "health", label: "Health Insurance" },
-                      { id: "life", label: "Life Insurance" },
-                      { id: "motor", label: "Motor Insurance" },
-                      { id: "home", label: "Home Insurance" },
-                      { id: "travel", label: "Travel Insurance" },
-                      { id: "term", label: "Term Life Insurance" },
-                    ].map(o => <option key={o.id} value={o.id}>{o.label}</option>)
-                  }
-                </select>
-              </div>
-            )}
+
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Document Type</label>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))}>
