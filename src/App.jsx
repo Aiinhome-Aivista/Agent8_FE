@@ -56,11 +56,15 @@ function MainLayout({ user, onLogout }) {
       case "supervisor-dashboard": return <SupervisorDashboard />;
       case "supervisor-ai-performance": return <AIPerformancePage />;
       case "supervisor-escalation-monitor": return <EscalationMonitor />;
+      case "supervisor-all-tickets": return <CSRTickets />;
+      case "supervisor-conversation-view": return <CSRConversation />;
       case "compliance-hub": return <ComplianceDashboard />;
       case "compliance-audit-logs": return <AuditLogsPage />;
       case "compliance-guardrail-alerts": return <GuardrailViolations />;
       case "compliance-sensitive-actions": return <SensitiveActionsPage />;
       case "compliance-export-reports": return <ExportPage />;
+      case "compliance-all-tickets": return <CSRTickets />;
+      case "compliance-conversation-view": return <CSRConversation />;
       default: return <div className="text-gray-400 text-center mt-16">Page not found</div>;
     }
   };

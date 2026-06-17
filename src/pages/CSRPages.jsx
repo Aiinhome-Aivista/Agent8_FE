@@ -94,6 +94,7 @@ export function CSRTickets() {
               </div>
               <div className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">{t.issue}</div>
               <div className="text-xs text-gray-400">{t.customer_name} · <Badge color={t.priority === "high" || t.priority === "critical" ? "red" : "amber"}>{t.priority}</Badge></div>
+              <div className="text-xs text-blue-600 mt-1.5 font-medium truncate">Assigned: {t.assigned_csr_name || "Unassigned"}</div>
             </div>
           ))}
         </div>
@@ -116,7 +117,7 @@ export function CSRTickets() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 bg-gray-50 rounded-xl p-3 text-sm mb-4">
-              {[["Customer", selected.customer_name], ["Email", selected.customer_email], ["Phone", selected.customer_phone || "—"], ["Policy", selected.policy_number || "—"], ["Category", selected.category || "—"], ["Created", fmtDate(selected.created_at)]].map(([l, v]) => (
+              {[["Customer", selected.customer_name], ["Email", selected.customer_email], ["Phone", selected.customer_phone || "—"], ["Policy", selected.policy_number || "—"], ["Category", selected.category || "—"], ["Assigned To", selected.assigned_csr_name || "Unassigned"], ["Created", fmtDate(selected.created_at)]].map(([l, v]) => (
                 <div key={l}><div className="text-xs text-gray-400 font-semibold">{l}</div><div className="text-gray-800">{v}</div></div>
               ))}
             </div>
@@ -294,8 +295,10 @@ export function CSRConversation() {
     <div className="flex gap-4 h-[calc(100vh-7rem)]">
       {/* ── Left: Ticket list ── */}
       <div className="w-72 overflow-y-auto space-y-2 flex-shrink-0">
-        <div className="text-xs text-gray-400 font-semibold uppercase px-1 mb-1">My Assigned Tickets</div>
-        {tickets.length === 0 && <EmptyState icon={Mailbox} title="No assigned tickets" />}
+        <div className="text-xs text-gray-400 font-semibold uppercase px-1 mb-1">
+          {window.location.pathname.includes('supervisor') ? 'All System Tickets' : 'My Assigned Tickets'}
+        </div>
+        {tickets.length === 0 && <EmptyState icon={Mailbox} title={window.location.pathname.includes('supervisor') ? 'No tickets found' : 'No assigned tickets'} />}
         {tickets.map(t => (
           <div key={t.id} onClick={() => selectTicket(t)}
             className={`border-2 rounded-xl p-3 cursor-pointer transition-all ${selectedTicket?.id === t.id ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white hover:border-blue-300"}`}>

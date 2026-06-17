@@ -1079,7 +1079,7 @@ export function EscalationPage() {
                   {t.assigned_csr_name && (
                     <div className="relative text-xs">
                       <div className="absolute -left-[17px] top-1 w-2.5 h-2.5 bg-blue-500 rounded-full ring-2 ring-white"></div>
-                      <span className="font-semibold text-gray-700">Assigned to CSR</span>
+                      <span className="font-semibold text-gray-700">Assigned to Support</span>
                       <div className="text-gray-400 mt-0.5">{t.assigned_csr_name}</div>
                     </div>
                   )}

@@ -84,6 +84,8 @@ export const NAV = {
     { id: "supervisor-dashboard", label: "KPI Dashboard", icon: Home },
     { id: "supervisor-ai-performance", label: "AI Performance", icon: Brain },
     { id: "supervisor-escalation-monitor", label: "Escalation Monitor", icon: AlertTriangle },
+    { id: "supervisor-all-tickets", label: "Manage Tickets", icon: Ticket },
+    { id: "supervisor-conversation-view", label: "Conversation View", icon: MessageSquare },
   ],
   compliance: [
     { id: "compliance-hub", label: "Compliance Hub", icon: Home },
