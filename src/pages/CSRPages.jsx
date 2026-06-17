@@ -279,7 +279,7 @@ export function CSRConversation() {
     setExpanded(sessionId); setLoadingM(true);
     try {
       // CSR views customer history via session_id; use customer's user_id param
-      const r = await api.get("/chat/history", { params: { session_id: sessionId, page: 1, page_size: 100 } });
+      const r = await api.get(`/chat/history/customer/${selectedTicket.user_id}`, { params: { session_id: sessionId, page: 1, page_size: 100 } });
       setMessages((r.data.history || []).reverse());
     } catch { toast("Failed to load messages", "error"); }
     finally { setLoadingM(false); }
