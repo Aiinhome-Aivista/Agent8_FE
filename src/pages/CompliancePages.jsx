@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback, createContext, useContext } f
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo } from "../components/SharedContext";
+import { api, useToast, AuthCtx, useAuth, fmt, fmtDate, timeAgo, parseDate } from "../components/SharedContext";
 import { Badge, KpiCard, Spinner, PageLoader, EmptyState, Toast, Sidebar, Topbar, NotifPanel } from "../components/SharedComponents";
 
 // ─── COMPLIANCE: DASHBOARD ────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ export function ComplianceDashboard() {
         <KpiCard label="Total Audit Logs" value={fmt(data.total_audit_logs)} />
         <KpiCard label="Guardrail Violations" value={data.guardrail_violations_30d} color="text-amber-600" sub="Last 30 days" />
         <KpiCard label="Sensitive Actions" value={data.sensitive_actions_30d} sub="Last 30 days" />
-        <KpiCard label="Compliance Score" value={`${data.compliance_score}%`} color="text-green-600" />
+        {/* <KpiCard label="Compliance Score" value={`${data.compliance_score}%`} color="text-green-600" /> */}
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-5">
@@ -85,7 +85,7 @@ export function AuditLogsPage() {
                   <td className="px-4 py-3">{l.user_name || "System"}</td>
                   <td className="px-4 py-3"><span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">{l.action}</span></td>
                   <td className="px-4 py-3 max-w-[200px]"><div className="truncate text-gray-600">{l.details}</div></td>
-                  <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">{new Date(l.created_at).toLocaleString("en-IN")}</td>
+                  <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">{parseDate(l.created_at).toLocaleString("en-IN")}</td>
                   <td className="px-4 py-3"><Badge color={sevColor[l.severity] || "slate"}>{l.severity}</Badge></td>
                 </tr>
               ))}
@@ -137,7 +137,7 @@ export function SensitiveActionsPage() {
               <td className="px-4 py-3">{a.user_name || "System"}</td>
               <td className="px-4 py-3"><span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">{a.action}</span></td>
               <td className="px-4 py-3 max-w-[200px]"><div className="truncate">{a.details}</div></td>
-              <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{new Date(a.created_at).toLocaleString("en-IN")}</td>
+              <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{parseDate(a.created_at).toLocaleString("en-IN")}</td>
               <td className="px-4 py-3"><Badge color={a.severity === "high" ? "red" : "amber"}>{a.severity}</Badge></td>
             </tr>
           ))}</tbody>

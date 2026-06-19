@@ -48,7 +48,7 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
 
   const roles = [
     { label: "Customer", email: "soniakhatun9786@gmail.com", icon: "👤" },
-    { label: "CSR Agent", email: "sonia19khatun98@gmail.com", icon: "🎧" },
+    { label: "CSR Agent", email: "rohan.developer2001@gmail.com", icon: "🎧" },
     { label: "Supervisor", email: "soniaagent234@gmail.com", icon: "📊" },
     { label: "Compliance", email: "compliance@test.com", icon: "🔒" },
   ];

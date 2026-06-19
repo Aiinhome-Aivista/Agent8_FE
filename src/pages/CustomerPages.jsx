@@ -1056,7 +1056,7 @@ export function EscalationPage() {
         <div className="flex-1 overflow-y-auto">
           {tickets.length === 0 ? <EmptyState icon={Ticket} title="No tickets yet" /> : (
             <div className="divide-y divide-gray-100">
-            {tickets.map(t => (
+            {[...tickets].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map(t => (
               <div key={t.id} className="p-4">
                 <div className="flex justify-between items-start mb-1">
                   <span className="font-mono text-xs text-gray-400">{t.ticket_id}</span>

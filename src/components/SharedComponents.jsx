@@ -92,7 +92,7 @@ export const NAV = {
     { id: "compliance-audit-logs", label: "Audit Logs", icon: ClipboardList },
     { id: "compliance-guardrail-alerts", label: "Guardrail Alerts", icon: Siren },
     { id: "compliance-sensitive-actions", label: "Sensitive Actions", icon: Eye },
-    { id: "compliance-export-reports", label: "Export Reports", icon: Download },
+    // { id: "compliance-export-reports", label: "Export Reports", icon: Download },
   ],
 };
 

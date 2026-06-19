@@ -41,7 +41,7 @@ export function LandingPage({ onNavigateToLogin }) {
     },
     {
       label: "CSR Agent Workspace",
-      email: "sonia19khatun98@gmail.com",
+      email: "rohan.developer2001@gmail.com",
       icon: "🎧",
       desc: "Manage tickets, live chat with customers, and review RAG-suggested solutions.",
       color: "from-purple-600/20 to-pink-600/20 hover:border-purple-500/50",
