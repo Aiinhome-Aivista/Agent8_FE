@@ -104,12 +104,12 @@ export function CustomerDashboard({ setPage }) {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-[#4A4A4A] rounded-2xl p-8 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 border border-[#5A5A5A]">
         <div>
           <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.name || "Customer"}!</h2>
-          <p className="text-blue-100">Manage your policies, track claims, and get instant answers with our AI assistant.</p>
+          <p className="text-[#D8D8D8]">Manage your policies, track claims, and get instant answers with our AI assistant.</p>
         </div>
-        <button onClick={() => setPage("customer-chat")} className="whitespace-nowrap bg-white text-blue-700 px-6 py-3 rounded-xl font-bold shadow-md hover:bg-blue-50 transition-colors flex items-center gap-2 flex-shrink-0">
+        <button onClick={() => setPage("customer-chat")} className="whitespace-nowrap bg-[#FF7A45] hover:bg-[#F56B2F] text-white px-6 py-3 rounded-xl font-bold shadow-md transition-colors flex items-center gap-2 flex-shrink-0 cursor-pointer">
           <MessageSquare size={20} />
           Ask AI Assistant
         </button>
@@ -125,17 +125,17 @@ export function CustomerDashboard({ setPage }) {
 
       {/* ── Expiring Soon ── */}
       {data.expiring_soon?.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-          <div className="font-bold text-amber-800 mb-3 flex items-center gap-2">
+        <div className="bg-[#FFF7F2] border border-[#FF8A55] rounded-2xl p-5 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <div className="font-bold text-[#FF5A14] mb-3 flex items-center gap-2">
             <span className="text-lg">⚠️</span> Policies Expiring Soon
           </div>
           <div className="space-y-2">
             {data.expiring_soon.map(p => (
-              <div key={p.policy_number} className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm py-2 px-4 bg-white rounded-xl border border-amber-100 shadow-sm">
-                <span className="text-amber-900 font-semibold mb-2 sm:mb-0">{p.policy_type} <span className="text-amber-500 font-mono ml-2">{p.policy_number}</span></span>
+              <div key={p.policy_number} className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm py-2 px-4 bg-white rounded-xl border border-[#FF8A55]/30 shadow-sm">
+                <span className="text-[#666666] font-semibold mb-2 sm:mb-0">{p.policy_type} <span className="text-[#FF5A14] font-mono ml-2">{p.policy_number}</span></span>
                 <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
-                  <span className="text-amber-700 font-medium">{p.days} days left <span className="text-amber-400 text-xs hidden md:inline ml-1">({fmtDate(p.expiry_date)})</span></span>
-                  <button onClick={() => setPage("customer-policy-renewal")} className="text-sm bg-amber-500 text-white px-4 py-1.5 rounded-lg hover:bg-amber-600 font-bold transition-colors shadow-sm shadow-amber-500/20">Renew Now</button>
+                  <span className="text-[#888888] font-medium">{p.days} days left <span className="text-[#888888] text-xs hidden md:inline ml-1">({fmtDate(p.expiry_date)})</span></span>
+                  <button onClick={() => setPage("customer-policy-renewal")} className="text-sm bg-[#FF7A45] text-white px-4 py-1.5 rounded-lg hover:bg-[#F56B2F] font-bold transition-colors shadow-sm">Renew Now</button>
                 </div>
               </div>
             ))}
@@ -145,18 +145,18 @@ export function CustomerDashboard({ setPage }) {
 
       {/* Quick Actions Grid */}
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-bold text-[#666666] mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button onClick={() => setPage("customer-documents")} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-2xl hover:border-blue-400 hover:shadow-md hover:-translate-y-1 transition-all group">
-            <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors mb-3">
+          <button onClick={() => setPage("customer-documents")} className="flex flex-col items-center p-6 bg-white border border-[#D8D8D8] rounded-2xl hover:border-[#FF8A55] hover:shadow-md hover:-translate-y-1 transition-all group cursor-pointer">
+            <div className="w-14 h-14 bg-[#FFF7F2] rounded-full flex items-center justify-center text-[#FF5A14] group-hover:bg-[#FF5A14] group-hover:text-white transition-colors mb-3">
               <UploadCloud size={26} />
             </div>
-            <span className="font-bold text-gray-800">Upload Document</span>
-            <span className="text-xs text-gray-500 mt-1 text-center font-medium">Add claims or proofs</span>
+            <span className="font-bold text-[#666666]">Upload Document</span>
+            <span className="text-xs text-[#888888] mt-1 text-center font-medium">Add claims or proofs</span>
           </button>
           
-          <button onClick={() => setPage("customer-escalation")} className="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-2xl hover:border-amber-400 hover:shadow-md hover:-translate-y-1 transition-all group">
-            <div className="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors mb-3">
+          <button onClick={() => setPage("customer-escalation")} className="flex flex-col items-center p-6 bg-white border border-[#D8D8D8] rounded-2xl hover:border-[#FF8A55] hover:shadow-md hover:-translate-y-1 transition-all group cursor-pointer">
+            <div className="w-14 h-14 bg-[#FFF7F2] rounded-full flex items-center justify-center text-[#FF5A14] group-hover:bg-[#FF5A14] group-hover:text-white transition-colors mb-3">
               <Ticket size={26} />
             </div>
             <span className="font-bold text-gray-800">Raise Ticket</span>
@@ -327,29 +327,29 @@ export function ChatPage() {
       </div>
 
       {/* Main Chat Panel */}
-      <div className="flex flex-col flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="flex flex-col flex-1 bg-white rounded-xl border border-[#D8D8D8] overflow-hidden shadow-sm">
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b border-gray-100 flex-shrink-0">
+        <div className="flex justify-between items-center p-4 border-b border-[#D8D8D8] flex-shrink-0 bg-[#FFF7F2]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">AI</div>
+            <div className="w-9 h-9 rounded-full bg-[#FF5A14] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow">AI</div>
             <div>
-              <div className="font-semibold text-gray-800">InsureAI Assistant</div>
-              <div className="flex items-center gap-1.5 text-xs text-teal-600">
-                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse" />
+              <div className="font-semibold text-[#666666]">InsureAI Assistant</div>
+              <div className="flex items-center gap-1.5 text-xs text-[#FF5A14]">
+                <span className="w-1.5 h-1.5 bg-[#FF5A14] rounded-full animate-pulse" />
                 Online · AI-powered
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* INJECTED: Agent Status Widget */}
+            {/* Agent Status Widget */}
             {messages.length > 0 && messages[messages.length - 1].role === "ai" && messages[messages.length - 1].worker_used && (
-              <div className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 font-mono font-semibold flex items-center gap-2">
-                <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+              <div className="text-xs bg-[#FFF7F2] text-[#FF5A14] px-3 py-1.5 rounded-lg border border-[#FF8A55] font-mono font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#FF5A14] rounded-full animate-pulse" />
                 {messages[messages.length - 1].worker_used || "Intent Agent"}
               </div>
             )}
-            <button onClick={startNewChat} className="text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium transition-colors">
+            <button onClick={startNewChat} className="text-xs bg-white text-[#666666] hover:bg-[#FFF7F2] border border-[#D8D8D8] hover:border-[#FF8A55] px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer">
               + New Chat
             </button>
           </div>
@@ -359,23 +359,22 @@ export function ChatPage() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((m, i) => (
             <div key={i} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white ${m.role === "ai" ? "bg-gradient-to-br from-blue-600 to-teal-500" : "bg-gradient-to-br from-violet-500 to-pink-500"}`}>
+              <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white shadow ${m.role === "ai" ? "bg-[#FF5A14]" : "bg-[#FF7A45]"}`}>
                 {m.role === "ai" ? "AI" : (user?.name?.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "U")}
               </div>
               <div className={`max-w-[75%] ${m.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
-                {/* Intent badge removed as requested */}
-                <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${m.role === "ai" ? "bg-gray-100 text-gray-800 rounded-tl-sm" : "bg-blue-600 text-white rounded-tr-sm"}`}>
+                <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${m.role === "ai" ? "bg-[#FFF7F2] text-[#666666] border border-[#FF8A55]/30 rounded-tl-sm shadow-sm" : "bg-[#FF7A45] text-white rounded-tr-sm shadow-sm"}`}>
                   {m.role === "ai" ? renderMarkdown(m.content) : m.content}
                 </div>
-                <div className="text-xs text-gray-400 mt-1">{m.time ? new Date(m.time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}</div>
+                <div className="text-xs text-[#888888] mt-1">{m.time ? new Date(m.time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}</div>
               </div>
             </div>
           ))}
           {loading && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">AI</div>
-              <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1.5 items-center">
-                {[0, 150, 300].map(d => <span key={d} className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+              <div className="w-8 h-8 rounded-full bg-[#FF5A14] flex items-center justify-center text-xs font-bold text-white flex-shrink-0 shadow">AI</div>
+              <div className="bg-[#FFF7F2] border border-[#FF8A55]/30 px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1.5 items-center">
+                {[0, 150, 300].map(d => <span key={d} className="w-2 h-2 bg-[#FF8A55] rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
               </div>
             </div>
           )}
@@ -386,7 +385,7 @@ export function ChatPage() {
         {messages.length <= 1 && (
           <div className="flex flex-wrap gap-2 px-4 pb-3">
             {QUICK.map(q => (
-              <button key={q} onClick={() => send(q)} className="px-3 py-1.5 text-xs border border-blue-200 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all bg-white">
+              <button key={q} onClick={() => send(q)} className="px-3 py-1.5 text-xs border border-[#FF8A55] text-[#FF5A14] rounded-full hover:bg-[#FF5A14] hover:text-white transition-all bg-[#FFF7F2] font-medium cursor-pointer">
                 {q}
               </button>
             ))}
@@ -394,16 +393,16 @@ export function ChatPage() {
         )}
 
         {/* Input */}
-        <div className="p-4 border-t border-gray-100 flex gap-3">
+        <div className="p-4 border-t border-[#D8D8D8] flex gap-3 bg-white">
           {messages.length > 0 && messages[messages.length - 1].role === "ai" && messages[messages.length - 1].intent === "verify_otp" && !loading ? (
-            <div className="flex flex-col items-center justify-center gap-2 w-full bg-blue-50/50 rounded-2xl py-4 border border-blue-100">
-              <div className="text-sm font-semibold text-blue-800">Please enter the 6-digit OTP sent to your email</div>
+            <div className="flex flex-col items-center justify-center gap-2 w-full bg-[#FFF7F2] rounded-2xl py-4 border border-[#FF8A55]">
+              <div className="text-sm font-semibold text-[#FF5A14]">Please enter the 6-digit OTP sent to your email</div>
               <input
                 autoFocus
                 type="text"
                 maxLength={6}
                 placeholder="------"
-                className="w-48 text-center text-3xl tracking-[0.3em] font-mono bg-white border-2 border-blue-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 shadow-inner"
+                className="w-48 text-center text-3xl tracking-[0.3em] font-mono bg-white border-2 border-[#FF8A55] rounded-xl px-4 py-3 focus:outline-none focus:border-[#FF5A14] shadow-inner text-[#666666]"
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, "");
                   e.target.value = val;
@@ -418,9 +417,9 @@ export function ChatPage() {
               <textarea ref={inputRef} rows={1} value={input} onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder="Ask me anything about your insurance…"
-                className="flex-1 resize-none bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all" />
+                className="flex-1 resize-none bg-[#FFF7F2] border border-[#D8D8D8] rounded-2xl px-4 py-2.5 text-sm text-[#666666] focus:outline-none focus:border-[#FF8A55] transition-all" />
               <button onClick={() => send()} disabled={!input.trim() || loading}
-                className="w-10 h-10 bg-blue-600 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all flex-shrink-0">
+                className="w-10 h-10 bg-[#FF7A45] hover:bg-[#F56B2F] disabled:bg-[#D8D8D8] text-white rounded-full flex items-center justify-center transition-all flex-shrink-0 cursor-pointer shadow">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="rotate-90"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
               </button>
             </>

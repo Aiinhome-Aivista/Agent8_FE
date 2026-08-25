@@ -74,11 +74,11 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 flex flex-col items-center justify-center p-4 relative">
+    <div className="min-h-screen bg-gradient-to-br from-[#4A4A4A] via-[#3A3A3A] to-[#2A2A2A] flex flex-col items-center justify-center p-4 relative font-sans">
       {onBackToLanding && (
         <button
           onClick={onBackToLanding}
-          className="absolute top-6 left-6 flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors cursor-pointer bg-slate-800/50 hover:bg-slate-800 px-4 py-2 rounded-xl border border-slate-705/50 backdrop-blur-md"
+          className="absolute top-6 left-6 flex items-center gap-2 text-sm text-[#D8D8D8] hover:text-white transition-colors cursor-pointer bg-[#4A4A4A]/60 hover:bg-[#4A4A4A] px-4 py-2 rounded-xl border border-[#5A5A5A] backdrop-blur-md"
         >
           <span>←</span> <span>Back to Home</span>
         </button>
@@ -88,18 +88,18 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
           className="text-center mb-6 cursor-pointer group"
           onClick={onBackToLanding}
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-3 shadow-lg group-hover:scale-105 transition-transform">
+          <div className="w-14 h-14 rounded-2xl bg-[#FF5A14] flex items-center justify-center text-2xl font-bold text-white mx-auto mb-3 shadow-lg group-hover:scale-105 transition-transform">
             I
           </div>
-          <div className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+          <div className="text-2xl font-bold text-white group-hover:text-[#FF7A45] transition-colors">
             InsureAI Pro
           </div>
-          <div className="text-sm text-slate-400 mt-1">
+          <div className="text-sm text-[#D8D8D8] mt-1">
             Enterprise Insurance Platform
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-7 shadow-2xl">
-          <div className="text-sm font-semibold text-gray-600 mb-3">
+        <div className="bg-white rounded-2xl p-7 shadow-2xl border border-[#D8D8D8]">
+          <div className="text-sm font-semibold text-[#666666] mb-3">
             Quick access — select role
           </div>
           <div className="grid grid-cols-2 gap-2 mb-5">
@@ -110,33 +110,33 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
                   setEmail(r.email);
                   setPass("123456");
                 }}
-                className={`flex items-center gap-2 p-2.5 rounded-xl border-2 text-left text-sm transition-all ${email === r.email ? "border-blue-600 bg-blue-50" : "border-gray-200 hover:border-gray-300"}`}
+                className={`flex items-center gap-2 p-2.5 rounded-xl border-2 text-left text-sm transition-all ${email === r.email ? "border-[#FF8A55] bg-[#FFF7F2]" : "border-[#D8D8D8] hover:border-[#FF8A55]"}`}
               >
                 <span>{r.icon}</span>
-                <span className="font-medium text-gray-800">{r.label}</span>
+                <span className="font-medium text-[#666666]">{r.label}</span>
               </button>
             ))}
           </div>
           <form onSubmit={submit}>
             <div className="mb-3">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">
+              <label className="text-xs font-semibold text-[#888888] uppercase tracking-wide block mb-1">
                 Email
               </label>
               <input
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#FFF7F2] border border-[#D8D8D8] rounded-lg px-3 py-2 text-sm text-[#666666] focus:outline-none focus:border-[#FF8A55]"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="mb-4">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">
+              <label className="text-xs font-semibold text-[#888888] uppercase tracking-wide block mb-1">
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPass ? "text" : "password"}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[#FFF7F2] border border-[#D8D8D8] rounded-lg px-3 py-2 pr-10 text-sm text-[#666666] focus:outline-none focus:border-[#FF8A55]"
                   value={pass}
                   onChange={(e) => setPass(e.target.value)}
                   required
@@ -144,7 +144,7 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#666666] transition-colors p-1"
                   tabIndex={-1}
                 >
                   {showPass ? (
@@ -183,15 +183,14 @@ export function LoginPage({ onLogin, initialEmail, onBackToLanding }) {
               </div>
             </div>
             {error && (
-              <div className="text-red-600 text-xs mb-3 bg-red-50 p-2 rounded-lg">
+              <div className="text-red-600 text-xs mb-3 bg-red-50 p-2 rounded-lg border border-red-200">
                 {error}
               </div>
             )}
-            {/* <div className="text-xs text-gray-400 mb-3 bg-gray-50 rounded-lg p-2">All test accounts use password: <strong>123456</strong></div> */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all"
+              className="w-full bg-[#FF7A45] hover:bg-[#F56B2F] text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
             >
               {loading ? <Spinner size="sm" /> : "Sign In"}
             </button>

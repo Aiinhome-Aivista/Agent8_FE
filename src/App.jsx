@@ -72,7 +72,7 @@ function MainLayout({ user, onLogout }) {
   if (!user) return <Navigate to="/login" />;
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#FFFFFF] font-sans overflow-hidden">
       <Sidebar page={page} setPage={setPage} user={user} onLogout={onLogout} />
       <main className="flex-1 flex flex-col h-full overflow-hidden">
         <Topbar title={PAGE_TITLES[page] || "InsureAI"} unread={unreadCount} onNotif={() => setShowNotif(true)} />
