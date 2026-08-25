@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8001/api';
+const BASE_URL = 'http://187.127.163.17:3033/api';
 
 const api = axios.create({
   baseURL: BASE_URL,

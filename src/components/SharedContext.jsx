@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 // ─── API Client ───────────────────────────────────────────────────────────────
-export const BASE = (import.meta?.env?.VITE_API_URL) || "http://localhost:8001/api";
+export const BASE = (import.meta?.env?.VITE_API_URL) || "http://187.127.163.17:3033/api";
 export const api = axios.create({ baseURL: BASE, timeout: 30000 });
 api.interceptors.request.use((c) => {
   const t = localStorage.getItem("ia_token");

@@ -145,7 +145,7 @@ export function CSRTickets() {
               {selected.attachment_path && (
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Attached Proof Document</label>
-                  <a href={`http://localhost:8001/api/${selected.attachment_path.replace(/\\/g, "/")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFF7F2] text-[#FF5A14] hover:bg-[#FFEBE0] rounded-lg text-sm font-medium transition-colors border border-[#FF8A55]">
+                  <a href={`http://187.127.163.17:3033/api/${selected.attachment_path.replace(/\\/g, "/")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFF7F2] text-[#FF5A14] hover:bg-[#FFEBE0] rounded-lg text-sm font-medium transition-colors border border-[#FF8A55]">
                     📄 View Uploaded Document
                   </a>
                 </div>
