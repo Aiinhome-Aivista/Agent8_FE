@@ -183,6 +183,7 @@ export function CustomerDashboard({ setPage }) {
     </div>
   );
 }
+// generateuuid
 const generateUUID = () => {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
     return crypto.randomUUID();
