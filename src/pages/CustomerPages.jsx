@@ -481,7 +481,7 @@ export function PoliciesPage({ setPage }) {
                 </div>
               ))}
             </div>
-            <button onClick={() => { setSelected(null); setCoverage(null); setPage("customer-policy-renewal"); }} className="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm">
+            <button onClick={() => { setSelected(null); setCoverage(null); setPage("customer-policy-renewal"); }} className="w-full mt-4 bg-[#FF7A45] text-white hover:bg-[#F56B2F] py-2.5 rounded-xl font-semibold text-sm">
               Renew Policy
             </button>
           </div>
@@ -516,7 +516,7 @@ export function PoliciesPage({ setPage }) {
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => viewCoverage(p)} className="flex-1 text-xs py-2 rounded-lg border border-gray-200 hover:bg-gray-50 font-medium">View Details</button>
-                  {p.status !== "expired" && <button onClick={() => setPage("customer-policy-renewal")} className="flex-1 text-xs py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium">Renew</button>}
+                  {p.status !== "expired" && <button onClick={() => setPage("customer-policy-renewal")} className="flex-1 text-xs py-2 rounded-lg bg-[#FF7A45] text-white hover:bg-[#F56B2F] hover:bg-blue-700 font-medium">Renew</button>}
                 </div>
               </div>
             </div>
@@ -578,7 +578,7 @@ export function RenewalPage() {
             </div>
           ))}
         </div>
-        <button onClick={() => { setDone(null); setSelected(null); setStep(1); }} className="w-full sm:w-auto px-8 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+        <button onClick={() => { setDone(null); setSelected(null); setStep(1); }} className="w-full sm:w-auto px-8 bg-[#FF7A45] text-white hover:bg-[#F56B2F] py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
           Renew Another Policy
         </button>
       </div>
@@ -601,7 +601,7 @@ export function RenewalPage() {
                 const isPast = step > i + 1;
                 return (
                   <div key={s} className="flex flex-col items-center gap-2 bg-white px-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${isPast ? "bg-green-500 text-white shadow-md shadow-green-500/20" : isActive ? "bg-blue-600 text-white shadow-md shadow-blue-600/20 ring-4 ring-blue-50" : "bg-gray-100 text-gray-400"}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${isPast ? "bg-green-500 text-white shadow-md shadow-green-500/20" : isActive ? "bg-[#FF7A45] text-white hover:bg-[#F56B2F] shadow-md shadow-blue-600/20 ring-4 ring-blue-50" : "bg-gray-100 text-gray-400"}`}>
                       {isPast ? <CheckCircle size={16} /> : i + 1}
                     </div>
                     <span className={`text-xs hidden sm:block ${isActive ? "text-blue-600 font-bold" : isPast ? "text-gray-700 font-medium" : "text-gray-400"}`}>{s}</span>
@@ -664,7 +664,7 @@ export function RenewalPage() {
                 </div>
                 <div className="flex flex-col-reverse sm:flex-row gap-3">
                   <button onClick={() => setStep(1)} className="w-full sm:w-1/3 border-2 border-gray-200 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors">← Back</button>
-                  <button onClick={() => setStep(3)} className="w-full sm:w-2/3 bg-blue-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all">Proceed to Payment →</button>
+                  <button onClick={() => setStep(3)} className="w-full sm:w-2/3 bg-[#FF7A45] text-white hover:bg-[#F56B2F] py-3 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all">Proceed to Payment →</button>
                 </div>
               </div>
             )}
@@ -806,7 +806,7 @@ export function EndorsementsPage() {
     <div className="max-w-2xl space-y-5">
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex gap-2 mb-4">
-          {tabs.map(([k, l]) => <button key={k} onClick={() => setTab(k)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === k ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>{l}</button>)}
+          {tabs.map(([k, l]) => <button key={k} onClick={() => setTab(k)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === k ? "bg-[#FF7A45] text-white hover:bg-[#F56B2F]" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>{l}</button>)}
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700 mb-4">
           ⚠️ Sensitive action — this change will be logged and reviewed by the compliance team.
@@ -827,7 +827,7 @@ export function EndorsementsPage() {
             <input type="checkbox" checked={form.apply_to_all} onChange={e => setForm(f => ({ ...f, apply_to_all: e.target.checked }))} className="accent-blue-600" />
             Apply to all active policies
           </label>
-          <button onClick={submit} disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+          <button onClick={submit} disabled={loading} className="w-full bg-[#FF7A45] text-white hover:bg-[#F56B2F] py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
             {loading ? <Spinner size="sm" /> : null} Update {tab.replace(/_/g, " ")}
           </button>
         </div>
@@ -927,7 +927,7 @@ export function UploadPage() {
               <div className="text-xs text-gray-400 mt-1">PDF, JPG, PNG up to 10MB</div>
               <input ref={fileRef} type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png,.txt" onChange={e => setFile(e.target.files[0])} />
             </div>
-            <button onClick={upload} disabled={loading || !file} className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 disabled:bg-gray-300">
+            <button onClick={upload} disabled={loading || !file} className="w-full bg-[#FF7A45] text-white hover:bg-[#F56B2F] py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 disabled:bg-gray-300">
               {loading ? <><Spinner size="sm" /> Uploading…</> : "Upload Document"}
             </button>
           </div>
@@ -1044,7 +1044,7 @@ export function EscalationPage() {
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Describe Your Issue {form.category === "Contact/Address Update" ? "(Include new details here)" : ""}</label>
             <textarea rows={5} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-blue-400" placeholder="Please describe your issue in detail…" value={form.issue} onChange={e => setForm(f => ({ ...f, issue: e.target.value }))} />
           </div>
-          <button onClick={submit} disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+          <button onClick={submit} disabled={loading} className="w-full bg-[#FF7A45] text-white hover:bg-[#F56B2F] py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
             {loading ? <Spinner size="sm" /> : null} Submit Ticket
           </button>
         </div>
@@ -1213,7 +1213,7 @@ export function ChatHistoryPage({ setPage }) {
                 <td className="px-5 py-4 text-right">
                   <button
                     onClick={() => continueChat(s.session_id)}
-                    className="text-xs bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap shadow-sm"
+                    className="text-xs bg-[#FF7A45] text-white hover:bg-[#F56B2F] px-4 py-2 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap shadow-sm"
                   >
                     ▶ Continue
                   </button>

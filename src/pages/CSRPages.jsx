@@ -81,20 +81,20 @@ export function CSRTickets() {
       <div className="w-80 flex flex-col">
         <div className="flex gap-1 mb-3 flex-wrap">
           {["all", "open", "in-progress", "resolved"].map(s => (
-            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1 rounded-lg text-xs font-medium ${filter === s ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}>{s}</button>
+            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${filter === s ? "bg-[#FF7A45] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>{s}</button>
           ))}
         </div>
         <div className="flex-1 overflow-y-auto space-y-2">
           {filtered.map(t => (
             <div key={t.id} onClick={() => { setSelected(t); setForm({ status: t.status, note: "", resolution_notes: t.resolution_notes || "" }); }}
-              className={`border-2 rounded-xl p-3 cursor-pointer transition-all ${selected?.id === t.id ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-300 bg-white"}`}>
+              className={`border-2 rounded-xl p-3 cursor-pointer transition-all ${selected?.id === t.id ? "border-[#FF8A55] bg-[#FFF7F2]" : "border-gray-200 hover:border-[#FF8A55] bg-white"}`}>
               <div className="flex justify-between items-start mb-1">
                 <span className="font-mono text-xs text-gray-400">{t.ticket_id}</span>
                 <Badge color={statusColor[t.status] || "slate"}>{t.status}</Badge>
               </div>
               <div className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">{t.issue}</div>
               <div className="text-xs text-gray-400">{t.customer_name} · <Badge color={t.priority === "high" || t.priority === "critical" ? "red" : "amber"}>{t.priority}</Badge></div>
-              <div className="text-xs text-blue-600 mt-1.5 font-medium truncate">Assigned: {t.assigned_csr_name || "Unassigned"}</div>
+              <div className="text-xs text-[#FF5A14] mt-1.5 font-medium truncate">Assigned: {t.assigned_csr_name || "Unassigned"}</div>
             </div>
           ))}
         </div>
@@ -145,7 +145,7 @@ export function CSRTickets() {
               {selected.attachment_path && (
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Attached Proof Document</label>
-                  <a href={`http://localhost:8001/api/${selected.attachment_path.replace(/\\/g, "/")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors">
+                  <a href={`http://localhost:8001/api/${selected.attachment_path.replace(/\\/g, "/")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFF7F2] text-[#FF5A14] hover:bg-[#FFEBE0] rounded-lg text-sm font-medium transition-colors border border-[#FF8A55]">
                     📄 View Uploaded Document
                   </a>
                 </div>
@@ -153,13 +153,13 @@ export function CSRTickets() {
 
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Add Note (Internal)</label>
-                <textarea rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-blue-400" placeholder="Internal note for team…" value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))} />
+                <textarea rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-[#FF8A55]" placeholder="Internal note for team…" value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))} />
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Resolution Notes</label>
-                <textarea rows={2} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-blue-400" placeholder="How was this resolved?" value={form.resolution_notes} onChange={e => setForm(f => ({ ...f, resolution_notes: e.target.value }))} />
+                <textarea rows={2} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-[#FF8A55]" placeholder="How was this resolved?" value={form.resolution_notes} onChange={e => setForm(f => ({ ...f, resolution_notes: e.target.value }))} />
               </div>
-              <button onClick={update} disabled={updating} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors">
+              <button onClick={update} disabled={updating} className="w-full bg-[#FF7A45] hover:bg-[#F56B2F] text-white py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm">
                 {updating ? <Spinner size="sm" /> : null} Update Ticket
               </button>
             </div>

@@ -64,7 +64,7 @@ export function AuditLogsPage() {
             <option value="high">High</option>
           </select>
           <input type="date" className="border border-gray-200 rounded-lg px-3 py-2 text-sm" value={filter.date_from} onChange={e => setFilter(f => ({ ...f, date_from: e.target.value }))} />
-          <button onClick={load} className="bg-blue-600 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <button onClick={load} className="bg-[#FF7A45] hover:bg-[#F56B2F] text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-1 cursor-pointer transition-colors shadow-sm">
             {loading ? <Spinner size="sm" /> : null} Filter
           </button>
         </div>
@@ -344,7 +344,7 @@ export function CSRKnowledgeBase() {
           <p className="text-sm text-gray-500">Manage internal documents and resources for CSR.</p>
         </div>
         <input type="file" accept=".pdf,.jpg,.jpeg,.png,.txt" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
-        <button onClick={() => setShowModal(true)} disabled={uploading} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-all cursor-pointer disabled:bg-gray-400">
+        <button onClick={() => setShowModal(true)} disabled={uploading} className="bg-[#FF7A45] hover:bg-[#F56B2F] text-white font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-all cursor-pointer disabled:bg-gray-400 shadow-sm">
           {uploading ? <Spinner size="sm" /> : <span>📤</span>}
           {uploading ? "Processing..." : "Upload Document"}
         </button>
@@ -359,7 +359,7 @@ export function CSRKnowledgeBase() {
                     <Spinner size="lg" />
                     <div className="text-sm font-medium">Uploading... {uploadProgress}%</div>
                     <div className="w-64 bg-gray-200 rounded-full h-2 overflow-hidden">
-                      <div className="bg-blue-600 h-2" style={{ width: `${uploadProgress}%` }} />
+                      <div className="bg-[#FF5A14] h-2" style={{ width: `${uploadProgress}%` }} />
                     </div>
                   </div>
                 </div>
@@ -374,11 +374,11 @@ export function CSRKnowledgeBase() {
                   onDragOver={handleDrag}
                   onDragLeave={handleDrag}
                   onDrop={handleDrop}
-                  className={`w-full border-2 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer ${dragActive ? 'border-blue-400 bg-blue-50' : 'border-dashed border-gray-200 bg-gray-50'}`}
+                  className={`w-full border-2 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer ${dragActive ? 'border-[#FF8A55] bg-[#FFF7F2]' : 'border-dashed border-gray-200 bg-gray-50'}`}
                 >
                   <div className="text-sm text-gray-600 mb-2">Drag & drop files here</div>
                   <div className="text-xs text-gray-500 mb-3">or</div>
-                  <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-2 bg-white border rounded text-sm">Select files</button>
+                  <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-2 bg-white border border-[#D8D8D8] rounded text-sm hover:bg-[#FFF7F2]">Select files</button>
                   <input type="file" accept=".pdf,.jpg,.jpeg,.png,.txt" multiple className="hidden" ref={fileInputRef} onChange={(e) => { handleFileChange(e); if (e.target.files?.[0]) fileInputRef.current.value = ""; }} />
                 </div>
                 <div className="text-sm text-gray-500">Allowed formats: PDF, JPG, JPEG, PNG, TXT. Max size: 5 MB.</div>
@@ -393,9 +393,9 @@ export function CSRKnowledgeBase() {
                   </div>
                 )}
                 <div className="flex justify-end gap-2 mt-4">
-                  <button onClick={() => { setShowModal(false); setSelectedFiles([]); setErrorMessage(''); }} className="px-4 py-2 rounded-lg border">Cancel</button>
+                  <button onClick={() => { setShowModal(false); setSelectedFiles([]); setErrorMessage(''); }} className="px-4 py-2 rounded-lg border border-[#D8D8D8] text-gray-600 hover:bg-gray-50">Cancel</button>
                   
-                  <button onClick={submitUpload} disabled={uploading} className="px-4 py-2 rounded-lg bg-blue-600 text-white">{uploading ? <Spinner size="sm" /> : "Upload"}</button>
+                  <button onClick={submitUpload} disabled={uploading} className="px-4 py-2 rounded-lg bg-[#FF7A45] hover:bg-[#F56B2F] text-white font-semibold shadow-sm">{uploading ? <Spinner size="sm" /> : "Upload"}</button>
                 </div>
               </div>
             </div>
